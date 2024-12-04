@@ -3,78 +3,76 @@
 void Mario::keyPressed(char key) 
 {
     key = std::tolower(key);
-    if (key == 'a') 
-    {
-        dir.x = -1;  // Move left continuously
-    }
-    else if (key == 'd')
-    {
-        dir.x = 1;   // Move right continuously
-    }
-    else if (key == 'w' && !isJumping && !isFalling) 
-    {
-        isJumping = true;
-        jumpCount = 0;
-        dir.y = -1;  // Start jumping upwards
-    }
-    else if (key == 's')
-    {
+
+	switch (key)
+	{
+	case 'w':
+        if (!isFalling)
+        {
+            isJumping = true;
+            dir.y = -1;
+			isOnGround = false;
+        }
+		break;
+	case 'a':
+		dir.x = -1;
+		break;
+	case 's':
         dir.x = 0;
-    }
+		break;
+	case 'd':
+		dir.x = 1;
+		break;
+	default:
+		break;
+	}
 }
 
 
-void Mario::move() {
-    // Update positions
-    int newX = x + dir.x;
-    int newY = y + dir.y;
-
-    // Horizontal movement: Check for wall collisions
-    if (!pBoard->is_pos_legal(newX, y)) 
-    {
-        dir.x = 0;   // Stop horizontal movement
-        newX = x;    // Reset to previous x position
-    }
-
+void Mario::move()
+{
     // Jumping logic
     if (isJumping)
     {
+        dir.y = -1; // Move upwards
         jumpCount++;
         if (jumpCount >= 2)
         {
             isJumping = false;
-            isFalling = true;
             jumpCount = 0;
-            dir.y = 1;   // Start falling downwards
-        }
-        else
-        {
-            dir.y = -1;  // Continue moving upwards
         }
     }
-
     // Falling logic
-    if (!isJumping && !pBoard->is_ground(newX, newY))
+    else if (!pBoard->is_ground(x, y))
     {
         isFalling = true;
-        dir.y = 1;       // Move downwards
+        dir.y = 1;  // Move downwards
     }
-    else if (pBoard->is_ground(newX, newY)) 
+    else 
     {
         isFalling = false;
-        dir.y = 0;       // Stop vertical movement
-        newY = y;        // Align with the ground
+        dir.y = 0;  // Stop vertical movement
     }
 
-    // Vertical movement: Check for collisions
-    if (!pBoard->is_pos_legal(newX, newY))
+    // Horizontal movement: Check for wall collisions
+    int newX = x + dir.x;
+    if (pBoard->is_pos_legal(newX, y))
+        x = newX; // Update horizontal position
+    else
+        dir.x = 0; // Stop horizontal movement
+
+    // Vertical movement: Apply dir.y
+    int newY = y + dir.y;
+    if (pBoard->is_pos_legal(x, newY))
+        y = newY; // Update vertical position
+    else
     {
-        dir.y = 0;   // Stop vertical movement
-        newY = y;    // Reset to previous y position
+        dir.y = 0;         // Stop vertical movement
+        isJumping = false;  // Stop jumping if we hit something
+        isFalling = false;  // Stop falling if we hit the ground
+        jumpCount = 0;
     }
-
-    // Update Mario's position
-    x = newX;
-    y = newY;
 }
+
+
 
