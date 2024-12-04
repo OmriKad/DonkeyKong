@@ -19,12 +19,7 @@ void Board::print() const {
 bool Board::is_pos_legal(int x, int y)
 {
 	char item = this->getChar(x, y);
-	if (item == '=')
-		return false;
-	else if (item == 'Q')
-		return false;
-
-	return true;
+	return item != 'Q' && item != '=' && item != '>' && item != '<';
 }
 
 bool Board::is_ground(int x, int y)

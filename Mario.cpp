@@ -7,7 +7,7 @@ void Mario::keyPressed(char key)
 	switch (key)
 	{
 	case 'w':
-        if (!isFalling)
+        if (isOnGround)
         {
             isJumping = true;
             dir.y = -1;
@@ -50,6 +50,7 @@ void Mario::move()
     }
     else 
     {
+		isOnGround = true;
         isFalling = false;
         dir.y = 0;  // Stop vertical movement
     }
@@ -70,6 +71,7 @@ void Mario::move()
         dir.y = 0;         // Stop vertical movement
         isJumping = false;  // Stop jumping if we hit something
         isFalling = false;  // Stop falling if we hit the ground
+		isOnGround = true;  // We are on the ground
         jumpCount = 0;
     }
 }

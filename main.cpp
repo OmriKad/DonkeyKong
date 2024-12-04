@@ -14,17 +14,18 @@ int main() {
 	Board board;
 	board.reset();
 	board.print();
-	Mario p;
-	p.setBoard(board);
+	Mario m;
+	m.setBoard(board);
 	while (true) {
-		p.draw();
+		board.reset();
+		m.draw();
 		if (_kbhit()) {
 			char key = _getch();
 			if (key == ESC) break;
-			p.keyPressed(key);
+			m.keyPressed(key);
 		}
 		Sleep(60);
-		p.erase();
-		p.move();
+		m.erase();
+		m.move();
 	}
 }
