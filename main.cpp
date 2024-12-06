@@ -19,14 +19,14 @@ int main()
 	m.setBoard(board);
 	while (true) {
 		board.reset();
-		m.draw();
+		//m.draw();
 		if (_kbhit()) {
 			char key = _getch();
 			if (key == ESC) break;
 			m.keyPressed(key);
 		}
-		Sleep(60);
-		m.erase();
+		Sleep(80);
+		//m.erase();
 		m.move();
 	}
 }

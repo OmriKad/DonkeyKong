@@ -29,20 +29,31 @@ class Board
     "Q                                                  H                           Q", // 19
     "Q                                                  H                           Q", // 20
     "Q                                              ========                        Q", // 21
-    "Q                                                  H                           Q", // 22
-    "Q                                                                              Q", // 23
+    "Q                                         =====    H                           Q", // 22
+    "Q                                                  H                           Q", // 23
     "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ"  // 24
     };
     char currentBoard[MAX_Y][MAX_X + 1]; // +1 for null terminator
 public:
     void reset();
     void print() const;
-    bool is_pos_legal(int x, int y) const
+    bool is_pos_legal(int x, int y, char &isClimbing, bool &endOfLadder) const
     {
         char tile = currentBoard[y][x];
+        if (isClimbing)
+        {
+            bool res = (tile == '=') || (tile == 'Q');
+            if (res)
+            {
+				endOfLadder = true;
+				isClimbing = 0;
+            }
+            return !res;
+		}
+		else
         return tile != 'Q' && tile != '=' && tile != '>' && tile != '<';
     }
-    bool is_ground(int x, int y) const { return currentBoard[y][x] != ' '; }
+    bool is_air(int x, int y) const { return currentBoard[y][x] == ' '; }
 	bool is_ladder(int x, int y) const { return currentBoard[y][x] == 'H'; }
 	char getChar(int x, int y) const { return currentBoard[y][x]; }
 };

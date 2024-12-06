@@ -6,10 +6,23 @@ void Mario::keyPressed(char key)
 	switch (key)
 	{
 	case 'w':
-		dir.y = -1;
+		if (!pBoard->is_ladder(x, y))
+		{
+			dir.y = -1;
+			jump();
+		}
+		else
+		{
+			dir.y = -1;
+			isClimbing = -1;
+		}
 		break;
     case 'x':
-		dir.y = 1;
+		if (pBoard->is_ladder(x, y + 2))
+		{
+			dir.y = 1;
+			isClimbing = 1;
+		}
 		break;
 	case 'a':
 		dir.x = -1;
@@ -28,164 +41,52 @@ void Mario::keyPressed(char key)
 	}
 }
 
-void Mario::moveLeft()
-{
-	if (pBoard->is_pos_legal(x - 1, y))
-	{
-		erase();
-		x--;
-		draw();
-	}
-    else
-	    dir.x = 0;
-}
-
-void Mario::moveRight()
-{
-	if (pBoard->is_pos_legal(x + 1, y))
-	{
-		erase();
-		x++;
-		draw();
-	}
-    else
-        dir.x = 0;
-}
-
-void Mario::moveUp(bool isLastStep)
-{
-	if (pBoard->is_pos_legal(x, y - 1))
-	{
-		erase();
-		y--;
-		draw();
-	}
-	else if (isLastStep)
-	{
-		erase();
-		y--;
-		y--;
-		draw();
-	}
-    else
-	    dir.y = 0;
-}
-
-void Mario::moveDown()
-{
-	if (pBoard->is_pos_legal(x, y + 1))
-	{
-		erase();
-		y++;
-		draw();
-	}
-    else
-        dir.y = 0;
-}
 
 // Responsible for the movement logic of mario accross the board.
 void Mario::move()
 {
-	isOnGround = pBoard->is_ground(x, y + 1);
-	char tile = pBoard->getChar(x + dir.x, y + dir.y);
-	canJump = (tile == ' ') && (isOnGround || isJumping);
-	canClimb = (tile == 'H' || tile == '=') && (isOnGround || onLadder);
-	if (!isOnGround && !isJumping && !isClimbing)
+	erase();
+	if (isClimbing == 1 && endOfLadder)
 	{
-		isFalling = true;
-		dir.y = 1;
+		y += 1;
+		endOfLadder = false;
 	}
-	if (dir.x == -1)
+	else if (isClimbing == -1 && endOfLadder)
 	{
-		moveLeft();
+		y -= 1;
+		endOfLadder = false;
 	}
-	if (dir.x == 1)
-	{
-		moveRight();
-	}
-	if (dir.y == -1)
-	{
-		if (canJump)
-		{
-			jump();
-		}
-		if (canClimb)
-		{
-			bool isLastStep = false;
-			if (pBoard->getChar(x + dir.x, y + dir.y == '='))
-				isLastStep = true;
-
-			climbUp(isLastStep);
-		}
-	}
-	if (dir.y == 1)
-	{
-		if (isFalling)
-		{
-			fall();
-		}
-		if (isClimbing)
-		{
-			climbDown();
-		}
-	}
+	pBoard->is_pos_legal(x, y + dir.y, isClimbing, endOfLadder)? y += dir.y : dir.y = 0;
+	pBoard->is_pos_legal(x + dir.x, y, isClimbing, endOfLadder) ? x += dir.x : dir.x = 0;
+	draw();
+	if (pBoard->is_air(x, y + 1)) { dir.y = 1;  fall(); }
 }
 
 void Mario::jump()
 {
-	if (jumpCount < jumpLimit)
+	for (int i = 0; (i < jumpLimit) && pBoard->is_air(x+dir.x, y-1); i++)
 	{
-		moveUp();
-		isOnGround = false;
-		isJumping = true;
-		jumpCount++;
+		erase();
+		x += dir.x;
+		y--;
+		draw();
+		Sleep(50);
 	}
-	else
-	{
-		dir.y = 0;
-		isJumping = false;
-		jumpCount = 0;
-	}
+	dir.y = 0;
 }
 
 // Mario falls down the board, while each fall iteration fall count is incremented.
 void Mario::fall()
 {
-	moveDown();
-	fallCount++;
-	if (fallCount >= fallLimit)
+	while (pBoard->is_air(x, y + dir.y))
 	{
-		isAlive = false;
+		erase();
+		x += dir.x;
+		y++;
+		draw();
+		Sleep(150);
 	}
-	if (isOnGround || dir.y == 0)
-	{
-		isFalling = false;
-		fallCount = 0;
-	}
-}
-
-void Mario::climbUp(bool isLastStep)
-{
-	if (isLastStep)
-	{
-		isOnGround = true;
-		isClimbing = false;
-		onLadder = false;
-		moveUp(isLastStep);
-	}
-	else
-	{
-		moveUp();
-		onLadder = true;
-		isClimbing = true;
-	}
-}
-
-void Mario::climbDown()
-{
-	moveDown();
-	onLadder = true;
-	isClimbing = true;
+	dir.y = 0;
 }
 
 
