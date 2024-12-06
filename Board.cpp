@@ -16,13 +16,3 @@ void Board::print() const {
 	std::cout << currentBoard[MAX_Y - 1];
 }
 
-bool Board::is_pos_legal(int x, int y)
-{
-	char item = this->getChar(x, y);
-	return item != 'Q' && item != '=' && item != '>' && item != '<';
-}
-
-bool Board::is_ground(int x, int y)
-{
-	return this->getChar(x, y) == ' ' ? false : true;
-}

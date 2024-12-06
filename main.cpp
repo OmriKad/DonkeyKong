@@ -9,7 +9,8 @@
 // Better put this is a proper class
 constexpr int ESC = 27;
 
-int main() {
+int main() 
+{
 	ShowConsoleCursor(false);
 	Board board;
 	board.reset();

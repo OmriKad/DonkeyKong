@@ -11,10 +11,18 @@ class Mario {
 	struct Direction { int x, y; }; // inner private struct
 	int x = 23, y = 23;
 	Direction dir{0, 0}; // current direction: dir.x, dir.y
+	char lives = 5;
+	bool isAlive = true;
+	bool canJump = true;
+	bool canClimb = true;
 	bool isJumping = false;
 	bool isOnGround = true;
 	bool isFalling = false;
 	short jumpCount = 0;
+	short const jumpLimit = 2;
+	short fallCount = 0;
+	short const fallLimit = 5;
+	bool onLadder = false;
 	bool isClimbing = false;
 	char ch = '@';
 	Board* pBoard = nullptr;
@@ -32,11 +40,17 @@ public:
 	{
 		draw(' ');
 	}
+	void jump();
+	void climbUp(bool isLastStep = false);
+	void climbDown();
+	void fall();
+	void moveUp(bool isLastStep = false);
+	void moveDown();
+	void moveLeft();
+	void moveRight();
 	void keyPressed(char key);
 	void move();
-	void setBoard(Board& board)
-	{
-		pBoard = &board;
-	}
+	bool getIsAlive() const { return isAlive; }
+	void setBoard(Board& board) { pBoard = &board; }
 };
 
