@@ -5,6 +5,7 @@
 #include "Board.h"
 #include "utils.h"
 #include "Mario.h"
+#include "Barrel.h"
 #include "Game.h"
 
 #define DEFAULT_VALUE 0
@@ -164,10 +165,12 @@ void Game::initGame()
 {
 	Board board;
 	Mario m;
+	Barrel b;
 	clearScreen();
 	board.reset();
 	board.print();
 	m.setBoard(board);
+	b.setBoard(board);
 	while (true) {
 		board.reset();
 		char key = DEFAULT_VALUE;
@@ -186,5 +189,6 @@ void Game::initGame()
 		m.keyPressed(key);
 		Sleep(80);
 		m.move();
+		b.move();
 	}
 }
