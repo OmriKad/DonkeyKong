@@ -67,7 +67,7 @@ void Mario::jump()
 	for (int i = 0; (i < jumpLimit) && pBoard->is_air(x+dir.x, y-1); i++)
 	{
 		erase();
-		x += dir.x;
+		pBoard->is_pos_legal(x + dir.x, y, isClimbing, endOfLadder) ? x += dir.x : dir.x = 0;
 		y--;
 		draw();
 		Sleep(50);
@@ -81,7 +81,7 @@ void Mario::fall()
 	while (pBoard->is_air(x, y + dir.y))
 	{
 		erase();
-		x += dir.x;
+		pBoard->is_pos_legal(x + dir.x, y, isClimbing, endOfLadder) ? x += dir.x : dir.x = 0;
 		y++;
 		draw();
 		Sleep(150);

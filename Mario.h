@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-
+#include <windows.h>
 #include "utils.h"
 #include "Board.h"
 
@@ -9,7 +9,7 @@ class Mario {
 	static constexpr char keys[] = { 'w', 'a', 'x', 'd', 's'};
 	static constexpr size_t numKeys = sizeof(keys) / sizeof(keys[0]);
 	struct Direction { int x, y; }; // inner private struct
-	int x = 48, y = 14;
+	int x = 65, y = 23;
 	Direction dir{0, 0}; // current direction: dir.x, dir.y
 	char lives = 5;
 	bool isAlive = true;
