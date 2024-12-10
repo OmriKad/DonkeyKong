@@ -13,13 +13,11 @@ class Mario {
 	Direction dir{0, 0}; // current direction: dir.x, dir.y
 	char lives = 5;
 	bool isAlive = true;
-	bool canJump = true;
+	bool isFalling = false;
 	short jumpCount = 0;
 	short const jumpLimit = 2;
 	short fallCount = 0;
 	short const fallLimit = 5;
-	char isClimbing = 0;
-	bool endOfLadder = true;
 	char ch = '@';
 	Board* pBoard = nullptr;
 	void draw(char c) const 

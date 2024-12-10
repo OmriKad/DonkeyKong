@@ -59,14 +59,12 @@ char Game::showMenu() const
 	char keyPressed = DEFAULT_VALUE;
 
 	clearScreen();
-	std::cout << " _______   ______   .__   __.  __  ___  ___________    ____     __  ___   ______   .__   __.   _______ " << std::endl;
-	std::cout << "|       \ /  __  \  |  \ |  | |  |/  / |   ____\   \  /   /    |  |/  /  /  __  \  |  \ |  |  /  _____|" << std::endl;
-	std::cout << "|  .--.  |  |  |  | |   \|  | |  '  /  |  |__   \   \/   /     |  '  /  |  |  |  | |   \|  | |  |  __  " << std::endl;
-	std::cout << "|  |  |  |  |  |  | |  . `  | |    <   |   __|   \_    _/      |    <   |  |  |  | |  . `  | |  | |_ | " << std::endl;
-	std::cout << "|  '--'  |  `--'  | |  |\   | |  .  \  |  |____    |  |        |  .  \  |  `--'  | |  |\   | |  |__| | " << std::endl;
-	std::cout << "|_______/ \______/  |__| \__| |__|\__\ |_______|   |__|        |__|\__\  \______/  |__| \__|  \______| " << std::endl;
-	std::cout << "                                                                                                       " << std::endl;
-	std::cout << "                 - A project by Omri and Yuval			 " << std::endl;
+	std::cout << "***************" << std::endl;
+	std::cout << "*             *" << std::endl;
+	std::cout << "* DONKEY KONG *" << std::endl;
+	std::cout << "*             *" << std::endl;
+	std::cout << "***************" << std::endl;
+	std::cout << "- A project by Omri and Yuval" << std::endl;
 	Sleep(4000);
 	clearScreen();
 

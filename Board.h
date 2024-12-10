@@ -37,22 +37,6 @@ class Board
 public:
     void reset();
     void print() const;
-    bool is_pos_legal(int x, int y, char &isClimbing , bool &endOfLadder) const
-    {
-        char tile = currentBoard[y][x];
-        if (isClimbing)
-        {
-            bool res = (tile == '=') || (tile == 'Q');
-            if (res)
-            {
-				endOfLadder = true;
-				isClimbing = 0;
-            }
-            return !res;
-		}
-		else
-        return tile != 'Q' && tile != '=' && tile != '>' && tile != '<';
-    }
 	bool is_pos_legal(int x, int y) const
 	{
 		char tile = currentBoard[y][x];

@@ -6,23 +6,10 @@ void Mario::keyPressed(char key)
 	switch (key)
 	{
 	case 'w':
-		if (!pBoard->is_ladder(x, y))
-		{
-			dir.y = -1;
-			jump();
-		}
-		else
-		{
-			dir.y = -1;
-			isClimbing = -1;
-		}
+		dir.y = -1;
 		break;
     case 'x':
-		if (pBoard->is_ladder(x, y + 2))
-		{
-			dir.y = 1;
-			isClimbing = 1;
-		}
+		dir.y = 1;
 		break;
 	case 'a':
 		dir.x = -1;
@@ -46,48 +33,109 @@ void Mario::keyPressed(char key)
 void Mario::move()
 {
 	erase();
-	if (isClimbing == 1 && endOfLadder)
+	// Responisble for the lateral movement of mario on the board.
+	switch (dir.x)
 	{
-		y += 1;
-		endOfLadder = false;
+	case 1:
+		pBoard->is_pos_legal(x + dir.x, y) ? x++ : dir.x = 0;
+		break;
+	case -1:
+		pBoard->is_pos_legal(x + dir.x, y) ? x-- : dir.x = 0;
+		break;
+		
 	}
-	else if (isClimbing == -1 && endOfLadder)
+
+	// Responsible for the vertical movement of mario on the board.
+	switch (dir.y)
 	{
-		y -= 1;
-		endOfLadder = false;
+	case 0:
+		if (pBoard->is_air(x, y + 1))
+			dir.y = 1;
+		break;
+	case -1: // User wanted to go up.
+		if (pBoard->is_air(x, y - 1))
+		{
+			if (jumpCount == jumpLimit)
+			{
+				dir.y = 0;
+				jumpCount = 0;
+			}
+			else
+			{
+				y--;
+				jumpCount++;
+			}
+		}
+		else if (pBoard->is_ladder(x, y - 1))
+		{
+			if (pBoard->is_ladder(x, y - 2))
+				y--;
+			else
+			{
+				y--;
+				dir.y = 0;
+			}
+			Sleep(100);
+		}
+		else
+		{
+			if (pBoard->is_ladder(x, y))
+			{
+				y -= 2;
+				dir.y = 0;
+			}
+			else
+			{
+				jumpCount = 0;
+				dir.y = 0;
+			}
+		}
+		break;
+
+	case 1: // User wanted to go down.
+		if (pBoard->is_air(x, y + 1))
+		{
+			y++;
+			fallCount++;
+			isFalling = true;
+			Sleep(100);
+		}
+		else if (pBoard->is_ladder(x, y + 1))
+		{
+			if (pBoard->is_ladder(x, y + 2))
+				y++;
+			else
+			{
+				y++;
+				dir.y = 0;
+			}
+			Sleep(100);
+		}
+		else
+		{
+			if (isFalling)
+			{
+				if (fallCount > fallLimit)
+					isAlive = false;
+				else
+				{
+					fallCount = 0;
+					dir.y = 0;
+					isFalling = false;
+				}
+			}
+			else
+			{
+				if (pBoard->is_ladder(x, y + 2))
+					y++;
+				else
+					dir.y = 0;
+			}
+		}
 	}
-	pBoard->is_pos_legal(x, y + dir.y, isClimbing, endOfLadder)? y += dir.y : dir.y = 0;
-	pBoard->is_pos_legal(x + dir.x, y, isClimbing, endOfLadder) ? x += dir.x : dir.x = 0;
 	draw();
-	if (pBoard->is_air(x, y + 1)) { dir.y = 1;  fall(); }
 }
 
-void Mario::jump()
-{
-	for (int i = 0; (i < jumpLimit) && pBoard->is_air(x+dir.x, y-1); i++)
-	{
-		erase();
-		pBoard->is_pos_legal(x + dir.x, y, isClimbing, endOfLadder) ? x += dir.x : dir.x = 0;
-		y--;
-		draw();
-		Sleep(50);
-	}
-	dir.y = 0;
-}
-
-// Mario falls down the board, while each fall iteration fall count is incremented.
-void Mario::fall()
-{
-	while (pBoard->is_air(x, y + dir.y))
-	{
-		erase();
-		pBoard->is_pos_legal(x + dir.x, y, isClimbing, endOfLadder) ? x += dir.x : dir.x = 0;
-		y++;
-		draw();
-		Sleep(150);
-	}
-	dir.y = 0;
-}
 
 
 
