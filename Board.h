@@ -1,5 +1,4 @@
 #pragma once
-
 class Board
 {
     static constexpr int MAX_X = 80;
@@ -8,14 +7,14 @@ class Board
     {
   // 01234567890123456789012345678901234567890123456789012345678901234567890123456789
     "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ", // 0
-    "Q                      $                                                       Q", // 1
-    "Q                     =====                                                    Q", // 2
-    "Q                &        H                                                    Q", // 3
-    "Q          ======>>>======================================                     Q", // 4
+    "Q                      $                                            _________  Q", // 1
+    "Q                     =====                                        |  Lives: | Q", // 2
+    "Q                &        H                                        |         | Q", // 3
+    "Q          ======>>>======================================         |_________| Q", // 4
     "Q                                                     H                        Q", // 5
     "Q                                                     H                        Q", // 6
     "Q                                                     H                        Q", // 7
-    "Q                        ================================<                     Q", // 8
+    "Q                        ================================<<                    Q", // 8
     "Q                           H                                                  Q", // 9
     "Q                           H                                                  Q", // 10
     "Q                           H                                                  Q", // 11
@@ -42,8 +41,14 @@ public:
 		char tile = currentBoard[y][x];
 		return tile != 'Q' && tile != '=' && tile != '>' && tile != '<';
 	}
-
+    void setCharAt(int x, int y, char c)
+    {
+        currentBoard[y][x] = c;
+    }
     bool is_air(int x, int y) const { return currentBoard[y][x] == ' '; }
 	bool is_ladder(int x, int y) const { return currentBoard[y][x] == 'H'; }
+    bool is_pauline(int x, int y) const { return currentBoard[y][x] == '$'; }
+    bool is_barrel(int x, int y) const { return currentBoard[y][x] == 'O'; }
 	char getChar(int x, int y) const { return currentBoard[y][x]; }
+    void printLives(short x) const;
 };

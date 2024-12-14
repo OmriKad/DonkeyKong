@@ -1,6 +1,6 @@
 #include <cstring>
 #include <iostream>
-
+#include "utils.h"
 #include "Board.h"
 
 void Board::reset() {
@@ -14,5 +14,11 @@ void Board::print() const {
 		std::cout << currentBoard[i] << '\n';
 	}
 	std::cout << currentBoard[MAX_Y - 1];
+}
+
+void Board::printLives(short x) const
+{
+	gotoxy(71, 3);
+	std::cout << x;
 }
 

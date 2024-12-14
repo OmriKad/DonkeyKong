@@ -7,6 +7,7 @@ class Barrel
 {
 	struct Direction { int x, y; }; // inner private struct
 	Direction dir{ 0, 0 }; // current direction: dir.x, dir.y
+	char underChar = ' ';
 	int lastDirX = 0;
 	int x = 18, y = 3;
 	bool needToExploade = false;
@@ -21,22 +22,21 @@ class Barrel
 		std::cout << c;
 	}
 public:
-	void draw() const
+	void updateBoardPosition(char c)
 	{
+		// Update the currentBoard array with the character 'c' at the barrel's position
+		pBoard->setCharAt(x, y, c);
+	}
+	void draw()
+	{
+		underChar = pBoard->getChar(x, y);
+		updateBoardPosition(ch);
 		draw(ch);
 	}
 	void erase()
 	{
-		char currentTile = pBoard->getChar(x, y);
-		switch (currentTile)
-		{
-		case 'H':
-			draw('H');
-			break;
-		default:
-			draw(' ');
-			break;
-		}
+		updateBoardPosition(underChar);
+		draw(underChar);
 	}
 	void move();
 	void setBoard(Board& board) { pBoard = &board; }

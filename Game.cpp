@@ -54,6 +54,22 @@ void Game::game()
 	}
 }
 
+void Game::checkStatus(Mario& m, bool& isGameRunning)
+{
+	if (m.getLives() == 0)
+	{
+		m.setIsAlive(false);
+		isGameRunning = false;
+		marioDied = true;
+	}
+	if (m.getHasWon())
+	{
+		m.setIsAlive(false);
+		isGameRunning = false;
+		marioWon = true;
+	}
+}
+
 char Game::showMenu() const
 {
 	char keyPressed = DEFAULT_VALUE;
@@ -136,12 +152,32 @@ void Game::showPauseScreen(char& keyPressed) const
 	clearScreen();
 
 	cout << "Game Paused" << endl << endl;
-	cout << "Press ESC to return to resume or (0) to return to the main menu," << endl;
+	cout << "Press ESC to return to resume or (0) to return to the main menu." << endl;
 
 	while (keyPressed != RETURN_TO_MENU && keyPressed != ESC)
 		keyPressed = getKeyFromUser();
 
 	return;
+}
+
+void Game::showDeathScreen() const
+{
+	clearScreen();
+
+	cout << endl << endl << endl;
+	cout << "       OH NO! MARIO DIED!       " << endl;
+	cout << "       Returning to main menu..." << endl;
+	Sleep(4000);
+}
+
+void Game::showWinScreen() const
+{
+	clearScreen();
+
+	cout << endl << endl << endl;
+	cout << "       PAULINE SAVED! YOU WON!       " << endl;
+	cout << "       Returning to main menu..." << endl;
+	Sleep(4000);
 }
 
 bool Game::getKeyPress(char& keyPressed) 
@@ -161,32 +197,47 @@ bool Game::getKeyPress(char& keyPressed)
 
 void Game::initGame()
 {
-	Board board;
+	bool isGameRunning = true;
 	Mario m;
-	Barrel b;
-	clearScreen();
-	board.reset();
-	board.print();
-	m.setBoard(board);
-	b.setBoard(board);
-	while (true) {
+	while (isGameRunning)
+	{
+		Board board;
+		m.resetPos();
+		m.setIsAlive(true);
+		Barrel b;
+		clearScreen();
 		board.reset();
-		char key = DEFAULT_VALUE;
-		if (getKeyPress(key))
+		board.print();
+		m.setBoard(board);
+		b.setBoard(board);
+		while (m.getIsAlive())
 		{
-			if (key == ESC)
-				showPauseScreen(key);
-			if (key == ESC)
+			char key = DEFAULT_VALUE;
+			if (getKeyPress(key))
 			{
-				clearScreen();
-				board.print();
+				if (key == ESC)
+					showPauseScreen(key);
+				if (key == ESC)
+				{
+					clearScreen();
+					board.print();
+				}
+				if (key == RETURN_TO_MENU)
+				{
+					isGameRunning = false;
+					break;
+				}
 			}
-			if (key == RETURN_TO_MENU)
-				break;
+			m.keyPressed(key);
+			b.move();
+			m.move();
+			checkStatus(m, isGameRunning);
+			board.printLives(m.getLives());
+			Sleep(90);
 		}
-		m.keyPressed(key);
-		Sleep(80);
-		m.move();
-		b.move();
 	}
+	if (marioDied)
+		showDeathScreen();
+	else if (marioWon)
+		showWinScreen();
 }

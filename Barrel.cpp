@@ -4,7 +4,6 @@ void Barrel::move()
 {
 	if (!getExploded())
 	{
-		Sleep(50);
 		erase();
 		if ((!pBoard->is_pos_legal(x + dir.x, y)))
 		{
