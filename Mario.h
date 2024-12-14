@@ -27,6 +27,9 @@ class Mario {
 		std::cout << c;
 	}
 public:
+	int getX() const { return x; }
+	int getY() const { return y; }
+	void decreaseLife() { lives--; }
 	void draw() const
 	{
 		draw(ch);

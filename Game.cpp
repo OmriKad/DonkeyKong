@@ -204,12 +204,12 @@ void Game::initGame()
 		Board board;
 		m.resetPos();
 		m.setIsAlive(true);
-		Barrel b;
 		clearScreen();
 		board.reset();
 		board.print();
 		m.setBoard(board);
-		b.setBoard(board);
+		donkeyKong.setBoard(board);
+		donkeyKong.setBarrels(barrels);
 		while (m.getIsAlive())
 		{
 			char key = DEFAULT_VALUE;
@@ -229,8 +229,10 @@ void Game::initGame()
 				}
 			}
 			m.keyPressed(key);
-			b.move();
+			donkeyKong.update();
+			moveBarrels(m);
 			m.move();
+			checkCollision(m);
 			checkStatus(m, isGameRunning);
 			board.printLives(m.getLives());
 			Sleep(90);
@@ -240,4 +242,48 @@ void Game::initGame()
 		showDeathScreen();
 	else if (marioWon)
 		showWinScreen();
+}
+
+void Game::checkCollision(Mario& m)
+{
+	for (const auto& barrel : barrels)
+	{
+		// Check if Mario is within 2 characters of an exploding barrel
+		if (barrel.getExploded())
+		{
+			int dx = abs(m.getX() - barrel.getX());
+			int dy = abs(m.getY() - barrel.getY());
+			if (dx <= 2 && dy <= 2)
+			{
+				m.decreaseLife();
+				m.setIsAlive(false);
+				break;
+			}
+		}
+		else if (m.getX() == barrel.getX() && m.getY() == barrel.getY())
+		{
+			m.decreaseLife();
+			m.resetPos();
+			break;
+		}
+	}
+}
+
+void Game::moveBarrels(Mario& m)
+{
+	for (auto it = barrels.begin(); it != barrels.end(); )
+	{
+		it->move();
+
+		// Remove barrel if it has exploded
+		if (it->getExploded())
+		{
+			checkCollision(m);
+			it = barrels.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
 }

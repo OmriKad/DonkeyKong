@@ -13,7 +13,7 @@ class Barrel
 	bool needToExploade = false;
 	bool exploded = false;
 	short fallCount = 0;
-	short const fallLimit = 8;
+	static const short fallLimit = 8;
 	char ch = 'O';
 	Board* pBoard = nullptr;
 	void draw(char c) const
@@ -22,6 +22,8 @@ class Barrel
 		std::cout << c;
 	}
 public:
+	int getX() const { return x; }
+	int getY() const { return y; }
 	void updateBoardPosition(char c)
 	{
 		// Update the currentBoard array with the character 'c' at the barrel's position
@@ -43,6 +45,7 @@ public:
 	bool getNeedToExploade() const { return needToExploade; }
 	void setNeedToExploade(bool value) { needToExploade = value; }
 	void setDir(int x, int y) { dir.x = x; dir.y = y; }
+	void setPosition(int posX, int posY) { x = posX; y = posY; }
 	void addFallCount() { fallCount++; }
 	void resetFallCount() { fallCount = 0; }
 	short getFallCount() const { return fallCount; }
