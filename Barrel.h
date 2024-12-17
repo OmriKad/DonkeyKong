@@ -15,6 +15,8 @@ class Barrel
 	short fallCount = 0;
 	static const short fallLimit = 8;
 	char ch = 'O';
+	int fallDelayCounter = 0;
+	int fallDelay = 2;
 	Board* pBoard = nullptr;
 	void draw(char c) const
 	{

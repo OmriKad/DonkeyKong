@@ -3,6 +3,8 @@
 #include <conio.h>
 #include "utils.h"
 
+
+// Using functions provieded from Amir Kirsh example.
 void gotoxy(int x, int y) 
 {
     std::cout.flush();

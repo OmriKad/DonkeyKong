@@ -2,6 +2,7 @@
 #include "Board.h"
 #include "Barrel.h"
 #include <vector>
+// This class and methods was adapted using CoPilot.
 class DonkeyKong
 {
 	int x = 17;

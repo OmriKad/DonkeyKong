@@ -22,9 +22,6 @@ void Game::game()
 {
 	char keyPressed = DEFAULT_VALUE;
 
-	// Utility function for rand function
-	srand(time(DEFAULT_VALUE));
-
 	// Disable cursor Method
 	ShowConsoleCursor(false);
 
@@ -195,46 +192,47 @@ bool Game::getKeyPress(char& keyPressed)
 	return false;
 }
 
+// Gameplay game loop
 void Game::initGame()
 {
-	bool isGameRunning = true;
-	Mario m;
+	bool isGameRunning = true; // game is stopped when lost all lives or reached pauline
+	Mario m; // initialize mario
 	while (isGameRunning)
 	{
-		Board board;
+		Board board; // initialize board
 		m.resetPos();
 		m.setIsAlive(true);
 		clearScreen();
-		board.reset();
+		board.reset(); // reseting and displating the board
 		board.print();
 		m.setBoard(board);
-		donkeyKong.setBoard(board);
+		donkeyKong.setBoard(board); // inititalizing donkey kong and his barrels
 		donkeyKong.setBarrels(barrels);
-		while (m.getIsAlive())
+		while (m.getIsAlive()) // the loop of mario current life
 		{
 			char key = DEFAULT_VALUE;
 			if (getKeyPress(key))
 			{
-				if (key == ESC)
+				if (key == ESC) // user want to pause
 					showPauseScreen(key);
-				if (key == ESC)
+				if (key == ESC) // user unpaused
 				{
 					clearScreen();
 					board.print();
 				}
-				if (key == RETURN_TO_MENU)
+				if (key == RETURN_TO_MENU) // user wanted to end current game and return to main menu
 				{
 					isGameRunning = false;
 					break;
 				}
 			}
-			m.keyPressed(key);
-			donkeyKong.update();
+			m.keyPressed(key); // sending the key command to mario to figure out direction
+			donkeyKong.update(); // donkey kong decideds weather to throw another barrel or not
 			moveBarrels(m);
-			m.move();
-			checkCollision(m);
-			checkStatus(m, isGameRunning);
-			board.printLives(m.getLives());
+			m.move(); // mario moving according to the input
+			checkCollision(m); // checking if mario got hit
+			checkStatus(m, isGameRunning); // checking the general game status - if mario is dead and lost or reached pauline and won
+			board.printLives(m.getLives()); // printing to the user the current no. of lives
 			Sleep(90);
 		}
 	}
@@ -269,6 +267,7 @@ void Game::checkCollision(Mario& m)
 	}
 }
 
+// Responsible for moving all the barrles on the board and to check for collisions
 void Game::moveBarrels(Mario& m)
 {
 	for (auto it = barrels.begin(); it != barrels.end(); )

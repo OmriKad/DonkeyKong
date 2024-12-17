@@ -49,12 +49,6 @@ void Mario::move()
 {
 	if (pBoard->is_pauline(x, y))
 		hasWon = true;
-	/*if (pBoard->is_barrel(x, y))
-	{
-		lives--;
-		isAlive = false;
-		return;
-	}*/
 	erase();
 	// Responisble for the lateral movement of mario on the board.
 	switch (dir.x)
@@ -91,6 +85,12 @@ void Mario::move()
 		}
 		else if (pBoard->is_ladder(x, y - 1))
 		{
+			if (climbDelayCounter < climbDelay)
+			{
+				climbDelayCounter++;
+				break;
+			}
+			climbDelayCounter = 0;
 			if (pBoard->is_ladder(x, y - 2))
 				y--;
 			else
@@ -123,6 +123,12 @@ void Mario::move()
 		}
 		else if (pBoard->is_ladder(x, y + 1))
 		{
+			if (climbDelayCounter < climbDelay)
+			{
+				climbDelayCounter++;
+				break;
+			}
+			climbDelayCounter = 0;
 			if (pBoard->is_ladder(x, y + 2))
 				y++;
 			else

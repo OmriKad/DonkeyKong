@@ -5,7 +5,9 @@
 #include "utils.h"
 #include "Board.h"
 
-class Mario {
+class Mario 
+{
+	// Some of the class attributes and the movement + board logic was inspired by the code example published my Amir Kirsh.
 	static constexpr char keys[] = { 'w', 'a', 'x', 'd', 's' };
 	static constexpr size_t numKeys = sizeof(keys) / sizeof(keys[0]);
 	struct Direction { int x, y; }; // inner private struct
@@ -16,6 +18,8 @@ class Mario {
 	bool hasWon = false;
 	bool isFalling = false;
 	short jumpCount = 0;
+	int climbDelayCounter = 0;
+	int climbDelay = 2;
 	short const jumpLimit = 2;
 	short fallCount = 0;
 	short const fallLimit = 5;

@@ -1,5 +1,6 @@
 #include "Barrel.h"
 
+// responsible for the movemnt logic of a single barrel on the screen
 void Barrel::move()
 {
 	if (!getExploded())
@@ -14,6 +15,12 @@ void Barrel::move()
 		switch (tileBelow)
 		{
 		case ' ':
+			if (fallDelayCounter < fallDelay) // making sure the fall is reasonably slow
+			{
+				fallDelayCounter++;
+				break;
+			}
+			fallDelayCounter = 0;
 			setDir(0, 1);
 			addFallCount();
 			if (getFallCount() >= getFallLimit())
