@@ -57,9 +57,9 @@ void Game::checkStatus(Mario& m, bool& isGameRunning)
 	{
 		m.setIsAlive(false);
 		isGameRunning = false;
-		marioDied = true;
+		marioLost = true;
 	}
-	if (m.getHasWon())
+	else if (m.getHasWon())
 	{
 		m.setIsAlive(false);
 		isGameRunning = false;
@@ -192,13 +192,15 @@ bool Game::getKeyPress(char& keyPressed)
 	return false;
 }
 
-// Gameplay game loop
 void Game::initGame()
 {
 	bool isGameRunning = true; // game is stopped when lost all lives or reached pauline
 	Mario m; // initialize mario
+	marioLost = false; // reset marioLost flag
+	marioWon = false; // reset marioWon flag
 	while (isGameRunning)
 	{
+		barrels.clear();
 		Board board; // initialize board
 		m.resetPos();
 		m.setIsAlive(true);
@@ -211,21 +213,9 @@ void Game::initGame()
 		while (m.getIsAlive()) // the loop of mario current life
 		{
 			char key = DEFAULT_VALUE;
-			if (getKeyPress(key))
-			{
-				if (key == ESC) // user want to pause
-					showPauseScreen(key);
-				if (key == ESC) // user unpaused
-				{
-					clearScreen();
-					board.print();
-				}
-				if (key == RETURN_TO_MENU) // user wanted to end current game and return to main menu
-				{
-					isGameRunning = false;
-					break;
-				}
-			}
+			int retFlag;
+			pauseStatus(key, board, isGameRunning, retFlag);
+			if (retFlag == 2) break;
 			m.keyPressed(key); // sending the key command to mario to figure out direction
 			donkeyKong.update(); // donkey kong decideds weather to throw another barrel or not
 			moveBarrels(m);
@@ -236,36 +226,61 @@ void Game::initGame()
 			Sleep(90);
 		}
 	}
-	if (marioDied)
+	if (marioLost)
 		showDeathScreen();
 	else if (marioWon)
 		showWinScreen();
 }
 
-void Game::checkCollision(Mario& m)
+void Game::pauseStatus(char& key, Board& board, bool& isGameRunning, int& retFlag)
 {
-	for (const auto& barrel : barrels)
+	retFlag = 1;
+	if (getKeyPress(key))
 	{
-		// Check if Mario is within 2 characters of an exploding barrel
-		if (barrel.getExploded())
+		if (key == ESC) // user want to pause
+			showPauseScreen(key);
+		if (key == ESC) // user unpaused
 		{
-			int dx = abs(m.getX() - barrel.getX());
-			int dy = abs(m.getY() - barrel.getY());
-			if (dx <= 2 && dy <= 2)
-			{
-				m.decreaseLife();
-				m.setIsAlive(false);
-				break;
-			}
+			clearScreen();
+			board.print();
 		}
-		else if (m.getX() == barrel.getX() && m.getY() == barrel.getY())
+		if (key == RETURN_TO_MENU) // user wanted to end current game and return to main menu
 		{
-			m.decreaseLife();
-			m.resetPos();
-			break;
+			isGameRunning = false;
+			{ retFlag = 2; return; };
 		}
 	}
 }
+
+void Game::checkCollision(Mario& m)
+{
+	const int EXPLODING_BARREL_DISTANCE = 2;
+	const int NON_EXPLODING_BARREL_DISTANCE = 1;
+
+	for (const auto& barrel : barrels)
+	{
+		int dx = abs(m.getX() - barrel.getX());
+		int dy = abs(m.getY() - barrel.getY());
+
+		if (barrel.getExploded() && dx <= EXPLODING_BARREL_DISTANCE && dy <= EXPLODING_BARREL_DISTANCE)
+		{
+			handleCollision(m);
+			return;
+		}
+		else if (!barrel.getExploded() && dx <= NON_EXPLODING_BARREL_DISTANCE && m.getY() == barrel.getY())
+		{
+			handleCollision(m);
+			return;
+		}
+	}
+}
+
+void Game::handleCollision(Mario& m)
+{
+	m.decreaseLife();
+	m.setIsAlive(false);
+}
+
 
 // Responsible for moving all the barrles on the board and to check for collisions
 void Game::moveBarrels(Mario& m)

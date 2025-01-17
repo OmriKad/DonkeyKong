@@ -47,7 +47,7 @@ void Mario::keyPressed(char key)
 // Responsible for the movement logic of mario accross the board.
 void Mario::move()
 {
-	if (pBoard->is_pauline(x, y))
+	if (pBoard->is_pauline(x+dir.x, y+dir.y))
 		hasWon = true;
 	erase();
 	// Responisble for the lateral movement of mario on the board.
