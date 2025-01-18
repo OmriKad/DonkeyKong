@@ -30,6 +30,7 @@ void Mario::keyPressed(char key)
         break;
     case 'a':
         dir.x = -1; // Move left
+		lastDirX = -1;
         break;
     case 's':
         dir.x = 0;  // Stop horizontal movement
@@ -37,7 +38,11 @@ void Mario::keyPressed(char key)
         break;
     case 'd':
         dir.x = 1;  // Move right
+		lastDirX = 1;
         break;
+	case 'p':
+		// Implement the hammer logic
+		break;
     default:
         break;
     }
@@ -55,11 +60,24 @@ void Mario::move()
 	{
 	case 1:
 		pBoard->is_pos_legal(x + dir.x, y) ? x++ : dir.x = 0;
+		if (pBoard->is_hammer(x, y))
+		{
+			ch = '#';
+			underChar = ' ';
+			erase();
+			hasHammer = true;
+		}
 		break;
 	case -1:
 		pBoard->is_pos_legal(x + dir.x, y) ? x-- : dir.x = 0;
+		if (pBoard->is_hammer(x, y))
+		{
+			ch = '#';
+			underChar = ' ';
+			erase();
+			hasHammer = true;
+		}
 		break;
-		
 	}
 
 	// Responsible for the vertical movement of mario on the board.

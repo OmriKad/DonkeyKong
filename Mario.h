@@ -9,7 +9,7 @@
 class Mario : public Character
 {
 	// Some of the class attributes and the movement + board logic was inspired by the code example published my Amir Kirsh.
-	static constexpr char keys[] = { 'w', 'a', 'x', 'd', 's' };
+	int lastDirX = 0;
 	short lives = 5;
 	bool isAlive = true;
 	bool hasWon = false;
@@ -20,7 +20,7 @@ class Mario : public Character
 	short const jumpLimit = 2;
 	short fallCount = 0;
 	short const fallLimit = 5;
-
+	bool hasHammer = false;
 public:
 	Mario() : Character() { ch = '@'; underChar = ' '; isAlive = true; hasWon = false; }
 

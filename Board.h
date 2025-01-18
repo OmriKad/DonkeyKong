@@ -27,8 +27,8 @@ class Board
     "Q                          ==============================                      Q", // 18
     "Q                                     H                                        Q", // 19
     "Q                                     H                                        Q", // 20
-    "Q                                     H                                        Q", // 21
-    "Q                                     H                                        Q", // 22
+    "Q        p                            H                                        Q", // 21
+    "Q      =====                          H                                        Q", // 22
     "Q                                     H                                        Q", // 23
     "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ"  // 24
     };
@@ -49,6 +49,8 @@ public:
 	bool is_ladder(int x, int y) const { return currentBoard[y][x] == 'H'; }
     bool is_pauline(int x, int y) const { return currentBoard[y][x] == '$'; }
     bool is_barrel(int x, int y) const { return currentBoard[y][x] == 'O'; }
+	bool is_ghost(int x, int y) const { return currentBoard[y][x] == 'x'; }
+	bool is_hammer(int x, int y) const { return currentBoard[y][x] == 'p'; }
 	char getChar(int x, int y) const { return currentBoard[y][x]; }
     void printLives(short x) const;
 };
