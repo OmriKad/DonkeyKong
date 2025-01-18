@@ -31,6 +31,7 @@
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="DonkeyKong.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Ghost.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mario.cpp" />
     <ClCompile Include="utils.cpp" />
@@ -41,6 +42,7 @@
     <ClInclude Include="Character.h" />
     <ClInclude Include="DonkeyKong.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Ghost.h" />
     <ClInclude Include="Mario.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>

@@ -1,5 +1,5 @@
 #include "Barrel.h"
-
+#include "Board.h"
 // responsible for the movemnt logic of a single barrel on the screen
 void Barrel::move()
 {

@@ -31,8 +31,13 @@ public:
     void draw()
     {
         underChar = pBoard->getChar(x, y);
+        underChar = isCharacter(underChar) ? ' ' : underChar;
         updateBoardPosition(ch);
         draw(ch);
+    }
+    bool isCharacter(char ch)
+    {
+        return (ch == 'O' || ch == '@' || ch == 'x');
     }
     void erase()
     {

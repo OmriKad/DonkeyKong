@@ -6,6 +6,7 @@
 #include "utils.h"
 #include "Mario.h"
 #include "Barrel.h"
+#include "Ghost.h"
 #include "Game.h"
 
 #define DEFAULT_VALUE 0
@@ -192,65 +193,98 @@ bool Game::getKeyPress(char& keyPressed)
 	return false;
 }
 
-void Game::initGame()
-{
-	bool isGameRunning = true; // game is stopped when lost all lives or reached pauline
-	Mario m; // initialize mario
-	marioLost = false; // reset marioLost flag
-	marioWon = false; // reset marioWon flag
-	while (isGameRunning)
-	{
+
+
+#include "Game.h"
+#include "Ghost.h"
+
+void Game::initGame() {
+	bool isGameRunning = true; // Game stops when Mario loses all lives or wins
+	Mario m;                   // Initialize Mario
+	marioLost = false;         // Reset Mario's lost flag
+	marioWon = false;          // Reset Mario's won flag
+
+	while (isGameRunning) {
 		barrels.clear();
-		Board board; // initialize board
+		Board board; // Initialize board
 		m.resetPos();
 		m.setIsAlive(true);
 		clearScreen();
-		board.reset(); // reseting and displating the board
+		board.reset(); // Reset and display the board
 		board.print();
 		m.setBoard(board);
-		donkeyKong.setBoard(board); // inititalizing donkey kong and his barrels
+		donkeyKong.setBoard(board); // Initialize Donkey Kong and barrels
 		donkeyKong.setBarrels(barrels);
-		while (m.getIsAlive()) // the loop of mario current life
-		{
+
+		// Initialize ghosts
+		std::vector<Ghost> ghosts = {
+			Ghost(35, 17), Ghost(30, 17), Ghost(25, 7)
+		};
+
+		for (auto& ghost : ghosts) {
+			ghost.setBoard(board); // Set the board for each ghost
+		}
+
+		while (m.getIsAlive()) { // Loop for Mario's current life
 			char key = DEFAULT_VALUE;
 			int retFlag;
 			pauseStatus(key, board, isGameRunning, retFlag);
 			if (retFlag == 2) break;
-			m.keyPressed(key); // sending the key command to mario to figure out direction
-			donkeyKong.update(); // donkey kong decideds weather to throw another barrel or not
-			moveBarrels(m);
-			m.move(); // mario moving according to the input
-			checkCollision(m); // checking if mario got hit
-			checkStatus(m, isGameRunning); // checking the general game status - if mario is dead and lost or reached pauline and won
-			board.printLives(m.getLives()); // printing to the user the current no. of lives
+
+			m.keyPressed(key);       // Send key command to Mario
+			donkeyKong.update();    // Donkey Kong decides whether to throw a barrel
+			moveBarrels(m);         // Move barrels
+			moveGhosts(ghosts);     // Move ghosts
+			m.move();               // Mario moves according to input
+			checkCollision(m);      // Check if Mario got hit
+			checkGhostCollision(m, ghosts); // Check Mario's collision with ghosts
+			checkStatus(m, isGameRunning); // Check if Mario is dead or reached Pauline
+			board.printLives(m.getLives()); // Display Mario's current number of lives
 			Sleep(90);
 		}
 	}
+
 	if (marioLost)
 		showDeathScreen();
 	else if (marioWon)
 		showWinScreen();
 }
 
+void Game::moveGhosts(std::vector<Ghost>& ghosts) {
+	for (auto& ghost : ghosts) {
+		ghost.move();
+	}
+}
+
 void Game::pauseStatus(char& key, Board& board, bool& isGameRunning, int& retFlag)
 {
-	retFlag = 1;
 	if (getKeyPress(key))
 	{
-		if (key == ESC) // user want to pause
-			showPauseScreen(key);
-		if (key == ESC) // user unpaused
+		showPauseScreen(key);
+		if (key == ESC)
 		{
 			clearScreen();
 			board.print();
 		}
-		if (key == RETURN_TO_MENU) // user wanted to end current game and return to main menu
+		else
 		{
 			isGameRunning = false;
-			{ retFlag = 2; return; };
+			retFlag = 2;
 		}
 	}
 }
+
+void Game::checkGhostCollision(Mario& m, const std::vector<Ghost>& ghosts) {
+	for (const auto& ghost : ghosts) {
+		if (m.getX() == ghost.getX() && m.getY() == ghost.getY()) {
+			m.decreaseLife();
+			m.setIsAlive(false);
+			break;
+		}
+	}
+}
+
+
 
 void Game::checkCollision(Mario& m)
 {
