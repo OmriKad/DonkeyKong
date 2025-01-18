@@ -12,7 +12,7 @@ class Game
 	void showInstructions() const;
 	bool getKeyPress(char& keyPressed);
 	void initGame();
-	void moveGhosts(std::vector<Ghost>& ghosts);
+	void moveGhosts(Mario& m);
 	void pauseStatus(char& key, Board& board, bool& isGameRunning, int& retFlag);
 	void showPauseScreen(char& keyPressed) const;
 	void showDeathScreen() const;
@@ -21,6 +21,7 @@ class Game
 	bool marioWon = false;
 	DonkeyKong donkeyKong;
 	std::vector<Barrel> barrels;
+	std::vector<Ghost> ghosts;
 	void handleCollision(Mario& m);
 	void checkGhostCollision(Mario& m, const std::vector<Ghost>& ghosts); // Add this line
 public:
@@ -29,5 +30,6 @@ public:
 	void game();
 	void checkStatus(Mario& m, bool& isGameRunning);
 	void checkCollision(Mario& m);
+	void checkAttacking(Mario& m);
 	void moveBarrels(Mario& m);
 };

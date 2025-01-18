@@ -37,7 +37,7 @@ public:
     }
     bool isCharacter(char ch)
     {
-        return (ch == 'O' || ch == '@' || ch == 'x');
+        return (ch == 'O' || ch == '@' || ch == 'x' || ch == '%');
     }
     void erase()
     {

@@ -21,6 +21,7 @@ class Mario : public Character
 	short fallCount = 0;
 	short const fallLimit = 5;
 	bool hasHammer = false;
+	bool usingHammer = false;
 public:
 	Mario() : Character() { ch = '@'; underChar = ' '; isAlive = true; hasWon = false; }
 
@@ -29,10 +30,13 @@ public:
 
 	void keyPressed(char key);
 	void move();
-	void resetPos() {x = 65; y = 23; }
+	void resetPos() { x = 65; y = 23; ch = '@'; hasHammer = false; }
 	bool getIsAlive() const { return isAlive; }
 	void setIsAlive(bool b) { isAlive = b; }
 	bool getHasWon() const { return hasWon; }
 	void setHasWon(bool b) { hasWon = b; }
 	short getLives() const { return lives; }
+	bool getHasHammer() const { return hasHammer; }
+	bool getUsingHammer() const { return usingHammer; }
+	void setUsingHammer(bool b) { usingHammer = b; }
 };

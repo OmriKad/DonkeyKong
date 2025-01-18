@@ -2,6 +2,8 @@
 #include <iostream>
 #include "utils.h"
 #include "Board.h"
+#include "Ghost.h"
+#include "Barrel.h"
 
 void Board::reset() {
 	for (int i = 0; i < MAX_Y; i++) {
@@ -15,6 +17,7 @@ void Board::print() const {
 	}
 	std::cout << currentBoard[MAX_Y - 1];
 }
+
 
 void Board::printLives(short x) const
 {

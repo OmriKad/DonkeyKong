@@ -195,9 +195,6 @@ bool Game::getKeyPress(char& keyPressed)
 
 
 
-#include "Game.h"
-#include "Ghost.h"
-
 void Game::initGame() {
 	bool isGameRunning = true; // Game stops when Mario loses all lives or wins
 	Mario m;                   // Initialize Mario
@@ -217,7 +214,7 @@ void Game::initGame() {
 		donkeyKong.setBarrels(barrels);
 
 		// Initialize ghosts
-		std::vector<Ghost> ghosts = {
+		ghosts = {
 			Ghost(35, 17), Ghost(30, 17), Ghost(25, 7)
 		};
 
@@ -234,8 +231,9 @@ void Game::initGame() {
 			m.keyPressed(key);       // Send key command to Mario
 			donkeyKong.update();    // Donkey Kong decides whether to throw a barrel
 			moveBarrels(m);         // Move barrels
-			moveGhosts(ghosts);     // Move ghosts
+			moveGhosts(m);     // Move ghosts
 			m.move();               // Mario moves according to input
+			checkAttacking(m);      // Check if Mario is attacking
 			checkCollision(m);      // Check if Mario got hit
 			checkGhostCollision(m, ghosts); // Check Mario's collision with ghosts
 			checkStatus(m, isGameRunning); // Check if Mario is dead or reached Pauline
@@ -250,9 +248,11 @@ void Game::initGame() {
 		showWinScreen();
 }
 
-void Game::moveGhosts(std::vector<Ghost>& ghosts) {
-	for (auto& ghost : ghosts) {
-		ghost.move();
+void Game::moveGhosts(Mario& m) {
+	for (auto it = ghosts.begin(); it != ghosts.end(); )
+	{
+		it->move();
+		it++;
 	}
 }
 
@@ -309,6 +309,40 @@ void Game::checkCollision(Mario& m)
 	}
 }
 
+void Game::checkAttacking(Mario& m)
+{
+	if (m.getUsingHammer())
+	{
+		for (auto barrel = barrels.begin(); barrel != barrels.end();)
+		{
+			int dx = abs(m.getX() - barrel->getX());
+			if (dx <= 3 && m.getY() == barrel->getY())
+			{
+				barrel->erase();
+				barrel = barrels.erase(barrel);
+			}
+			else
+			{
+				++barrel;
+			}
+		}
+		for (auto ghost = ghosts.begin(); ghost != ghosts.end();)
+		{
+			int dx = abs(m.getX() - ghost->getX());
+			if (dx <= 3 && m.getY() == ghost->getY())
+			{
+				ghost->erase();
+				ghost = ghosts.erase(ghost);
+			}
+			else
+			{
+				++ghost;
+			}
+		}
+		m.setUsingHammer(false);
+	}
+}
+
 void Game::handleCollision(Mario& m)
 {
 	m.decreaseLife();
@@ -326,7 +360,6 @@ void Game::moveBarrels(Mario& m)
 		// Remove barrel if it has exploded
 		if (it->getExploded())
 		{
-			checkCollision(m);
 			it = barrels.erase(it);
 		}
 		else

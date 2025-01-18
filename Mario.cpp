@@ -41,7 +41,10 @@ void Mario::keyPressed(char key)
 		lastDirX = 1;
         break;
 	case 'p':
-		// Implement the hammer logic
+		if (hasHammer)
+		{
+			usingHammer = true;
+		}
 		break;
     default:
         break;
@@ -62,7 +65,7 @@ void Mario::move()
 		pBoard->is_pos_legal(x + dir.x, y) ? x++ : dir.x = 0;
 		if (pBoard->is_hammer(x, y))
 		{
-			ch = '#';
+			ch = '%';
 			underChar = ' ';
 			erase();
 			hasHammer = true;
@@ -72,7 +75,7 @@ void Mario::move()
 		pBoard->is_pos_legal(x + dir.x, y) ? x-- : dir.x = 0;
 		if (pBoard->is_hammer(x, y))
 		{
-			ch = '#';
+			ch = '%';
 			underChar = ' ';
 			erase();
 			hasHammer = true;
