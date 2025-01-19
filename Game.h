@@ -4,17 +4,24 @@
 #include "DonkeyKong.h"
 #include "Barrel.h"
 #include "Ghost.h"
+#include <cstring>
+#include <algorithm>
 #include <vector>
 
 class Game
 {
+	void downloadLevels();
+	// string vector for the file names
+	std::vector<std::string> levelsNames;
+	void scanFileNames(std::vector<std::string>& levelNames);
 	char showMenu() const;
 	void showInstructions() const;
 	bool getKeyPress(char& keyPressed);
-	void initGame();
+	void initGame(Board& currBoard, short currScore, short levelIndex);
 	void moveGhosts(Mario& m);
 	void pauseStatus(char& key, Board& board, bool& isGameRunning, int& retFlag);
 	void showPauseScreen(char& keyPressed) const;
+	void showNoLevelAviableScreen() const;
 	void showDeathScreen() const;
 	void showWinScreen() const;
 	bool marioLost = false;
@@ -22,6 +29,7 @@ class Game
 	DonkeyKong donkeyKong;
 	std::vector<Barrel> barrels;
 	std::vector<Ghost> ghosts;
+	std::vector<Board> levels;
 	void handleCollision(Mario& m);
 	void checkGhostCollision(Mario& m, const std::vector<Ghost>& ghosts); // Add this line
 public:

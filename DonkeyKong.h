@@ -17,6 +17,7 @@ class DonkeyKong
 public:
 	void setBoard(Board& board) { pBoard = &board; }
 	void setBarrels(std::vector<Barrel>& barrels) { pBarrels = &barrels; }
+	void setDonkeyLoc(int x, int y) { this->x = x; this->y = y; }
 	void throwBarrel();
 	void update();
 };

@@ -10,7 +10,8 @@ class Mario : public Character
 {
 	// Some of the class attributes and the movement + board logic was inspired by the code example published my Amir Kirsh.
 	int lastDirX = 0;
-	short lives = 5;
+	short lives;
+	short score;
 	bool isAlive = true;
 	bool hasWon = false;
 	bool isFalling = false;
@@ -26,16 +27,19 @@ public:
 	Mario() : Character() { ch = '@'; underChar = ' '; isAlive = true; hasWon = false; }
 
 	void decreaseLife() { lives--; }
-
-
+	void gainPoints() { score += 10; }
+	void decreasePoints() { score -= 40; }
 	void keyPressed(char key);
 	void move();
-	void resetPos() { x = 65; y = 23; ch = '@'; hasHammer = false; }
+	void resetPos() { x = pBoard->getMarioStartX(); y = pBoard->getMarioStartY(); ch = '@'; hasHammer = false; }
 	bool getIsAlive() const { return isAlive; }
 	void setIsAlive(bool b) { isAlive = b; }
 	bool getHasWon() const { return hasWon; }
 	void setHasWon(bool b) { hasWon = b; }
 	short getLives() const { return lives; }
+	void setLives(short l) { lives = l; }
+	short getScore() const { return score; }
+	void setScore(short s) { score = s; }
 	bool getHasHammer() const { return hasHammer; }
 	bool getUsingHammer() const { return usingHammer; }
 	void setUsingHammer(bool b) { usingHammer = b; }

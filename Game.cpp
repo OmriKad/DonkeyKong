@@ -1,26 +1,28 @@
 ﻿#include <iostream>
 #include <windows.h>
 #include <conio.h>
-
+#include <fstream>
 #include "Board.h"
 #include "utils.h"
 #include "Mario.h"
 #include "Barrel.h"
 #include "Ghost.h"
 #include "Game.h"
-
+#include <regex>
+#include <filesystem>
 #define DEFAULT_VALUE 0
 #define ESC 27
 #define START_GAME '1'
 #define SHOW_INSTRUCTIONS '8'
 #define EXIT_GAME '9'
 #define RETURN_TO_MENU '0'
-
+#define INITIAL_SCORE 100
+#define MAX_LIVES 5
 
 using namespace std;
-
 void Game::game()
 {
+	downloadLevels();
 	char keyPressed = DEFAULT_VALUE;
 
 	// Disable cursor Method
@@ -36,7 +38,10 @@ void Game::game()
 		{
 			// Player pressed start game key
 		case START_GAME:
-			initGame();
+			if (levels.empty())
+				showNoLevelAviableScreen();
+			else
+				initGame(levels[0], INITIAL_SCORE, MAX_LIVES);// should start at lvl 1
 			break;
 			// Player pressed show instructions key
 		case SHOW_INSTRUCTIONS:
@@ -68,6 +73,32 @@ void Game::checkStatus(Mario& m, bool& isGameRunning)
 	}
 }
 
+void Game::downloadLevels()
+{
+	// Get all the file names of the levels, for each name open the file, read the file content to the board and push the board to the levels vector
+	scanFileNames(levelsNames);
+	for (const auto& levelName : levelsNames) {
+		Board board;
+		board.readBoardFromFile(levelName);
+		levels.push_back(board);
+	}
+}
+
+
+
+void Game::scanFileNames(std::vector<std::string>& levelNames)
+{
+	// loop through the current directory and if the file name is of the format "dkong_*.txt" add it to the vector fileNames
+	namespace fs = std::filesystem;
+	for (const auto& entry : fs::directory_iterator(fs::current_path())) {
+		auto filename = entry.path().filename();
+		auto filenameStr = filename.string();
+		if (filenameStr.substr(0, 6) == "dkong_" && filename.extension() == ".txt") {
+			levelNames.push_back(filenameStr);
+		}
+	}
+}
+
 char Game::showMenu() const
 {
 	char keyPressed = DEFAULT_VALUE;
@@ -84,6 +115,7 @@ char Game::showMenu() const
 
 	// Present menu to user
 	cout << "(1) Start a new game" << endl;
+	cout << "(2) Choose a stage by name" << endl;
 	cout << "(8) Read instructions" << endl;
 	cout << "(9) EXIT" << endl;
 
@@ -114,11 +146,13 @@ void Game::showInstructions() const
 
 	cout << "Game Objective:" << endl << endl;
 
-	cout << "Pauline '$' is in peril! She is held by the evil Donkey Kong '&' at the top of floor of the game board." << endl;
-	cout << "You are playing as Mario '@' - a brave plumber that needs to save the princess." << endl;
-	cout << "Climb your way up the floors using the ladders marked by 'H'." << endl;
-	cout <<	"avoid getting hit by barrels 'O' that fall and roll according to their last slope '<' '>'. Barrles that fall from high ground will expoled '*'!" << endl;
+	cout << "Princess Pauline '$' is in peril! She is held by the evil Donkey Kong '&' at the top of floor of the game board." << endl;
+	cout << "You are playing as Mario '@' - a brave plumber who volunteered to save the princess." << endl;
+	cout << "Climb your way up the floors using the ladders marked by 'H', or by jumping." << endl;
+	cout <<	"Avoid getting hit by barrels 'O' that fall and roll according to their last slope '<' '>'. Barrles that fall from high ground will expoled '*'!" << endl;
+	cout << "Ghosts 'x' exsist!, they would wander around floors in a random direction. Avoid getting hit my them as well!" << endl;
 	cout << "Mario can Jump to avoid getting hit, but beware of falling from high ground!" << endl;
+	cout << "Each stage has a hammer 'p' that can be used to destroy barrels and ghosts, When collecting it, mario would change to '%'." << endl;
 	cout << "Once Mario reaches Pauline, you win the current level." << endl << endl;
 
 	cout << "Controls:" << endl << endl;
@@ -127,11 +161,16 @@ void Game::showInstructions() const
 	cout << "* Move Right: d or D" << endl;
 	cout << "* Stay in place: s or S" << endl;
 	cout << "* Jump or climb up: w or W" << endl;
-	cout << "* Climb Down: x or X" << endl << endl;
+	cout << "* Climb Down: x or X" << endl;
+	cout << "* Use Hammer: p or P" << endl << endl;
 
 	cout << "Health system:" << endl;
 	cout << "Mario begins the level with 3 lives. For each hit or fall from height Mario losses 1 life and the level restarts." << endl;
 	cout << "When reaching 0 lives, the game ends." << endl << endl;
+
+	cout << "Score system:" << endl;
+	cout << "Upon succssesful hammering down a barrel or a ghost, you recive 10 Pts. If a barrel or a ghost get you, you will lose 40 Pts." << endl;
+	cout << "The points you recieve or lose will continue with you for the entire game, so try to gain as much as you can!" << endl;
 
 	cout << "Have Fun and Good Luck!" << endl << endl;
 
@@ -141,6 +180,15 @@ void Game::showInstructions() const
 		keyPressed = getKeyFromUser();
 
 	return;
+}
+
+void Game::showNoLevelAviableScreen() const {
+	clearScreen();
+	cout << endl << endl << endl;
+	cout << "       No levels were found!       " << endl;
+	cout << "       Please check files integrity.      " << endl;
+	cout << "       Returning to main menu..." << endl;
+	Sleep(4000);
 }
 
 void Game::showPauseScreen(char& keyPressed) const
@@ -195,37 +243,42 @@ bool Game::getKeyPress(char& keyPressed)
 
 
 
-void Game::initGame() {
+void Game::initGame(Board& currBoard, short currScore, short currLives) {
 	bool isGameRunning = true; // Game stops when Mario loses all lives or wins
 	Mario m;                   // Initialize Mario
+	m.setScore(currScore);
+	m.setLives(currLives);
 	marioLost = false;         // Reset Mario's lost flag
 	marioWon = false;          // Reset Mario's won flag
 
 	while (isGameRunning) {
+		// Clear the barrels and ghosts vectors from the previous session
 		barrels.clear();
-		Board board; // Initialize board
+		ghosts.clear();
+		// Intialize the mario
+		m.setBoard(currBoard);
 		m.resetPos();
 		m.setIsAlive(true);
-		clearScreen();
-		board.reset(); // Reset and display the board
-		board.print();
-		m.setBoard(board);
-		donkeyKong.setBoard(board); // Initialize Donkey Kong and barrels
+		// Initialize donkey kong
+		donkeyKong.setBoard(currBoard);
 		donkeyKong.setBarrels(barrels);
-
+		donkeyKong.setDonkeyLoc(currBoard.getDonkeyStartX(), currBoard.getDonkeyStartY());
 		// Initialize ghosts
-		ghosts = {
-			Ghost(35, 17), Ghost(30, 17), Ghost(25, 7)
-		};
-
-		for (auto& ghost : ghosts) {
-			ghost.setBoard(board); // Set the board for each ghost
+		std::vector<Board::Position> ghostsPositions = currBoard.getGhostsStartPos();
+		for (auto& pos : ghostsPositions) {
+            Ghost g(pos.x, pos.y);
+			g.setBoard(currBoard);
+			ghosts.push_back(g);
 		}
+		clearScreen();
+		currBoard.reset(); // Reset and display the board
+		currBoard.print();
+
 
 		while (m.getIsAlive()) { // Loop for Mario's current life
 			char key = DEFAULT_VALUE;
 			int retFlag;
-			pauseStatus(key, board, isGameRunning, retFlag);
+			pauseStatus(key, currBoard, isGameRunning, retFlag);
 			if (retFlag == 2) break;
 
 			m.keyPressed(key);       // Send key command to Mario
@@ -237,7 +290,7 @@ void Game::initGame() {
 			checkCollision(m);      // Check if Mario got hit
 			checkGhostCollision(m, ghosts); // Check Mario's collision with ghosts
 			checkStatus(m, isGameRunning); // Check if Mario is dead or reached Pauline
-			board.printLives(m.getLives()); // Display Mario's current number of lives
+			currBoard.printLegend(m.getLives(), m.getScore()); // Display the legend
 			Sleep(90);
 		}
 	}
@@ -278,6 +331,7 @@ void Game::checkGhostCollision(Mario& m, const std::vector<Ghost>& ghosts) {
 	for (const auto& ghost : ghosts) {
 		if (m.getX() == ghost.getX() && m.getY() == ghost.getY()) {
 			m.decreaseLife();
+			m.decreasePoints();
 			m.setIsAlive(false);
 			break;
 		}
@@ -320,6 +374,7 @@ void Game::checkAttacking(Mario& m)
 			{
 				barrel->erase();
 				barrel = barrels.erase(barrel);
+				m.gainPoints();
 			}
 			else
 			{
@@ -333,6 +388,7 @@ void Game::checkAttacking(Mario& m)
 			{
 				ghost->erase();
 				ghost = ghosts.erase(ghost);
+				m.gainPoints();
 			}
 			else
 			{
@@ -346,6 +402,7 @@ void Game::checkAttacking(Mario& m)
 void Game::handleCollision(Mario& m)
 {
 	m.decreaseLife();
+	m.decreasePoints();
 	m.setIsAlive(false);
 }
 

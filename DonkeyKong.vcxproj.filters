@@ -66,4 +66,17 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="dkong_1.screen.txt">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="dkong_2.screen.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="dkong_3.screen.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+  </ItemGroup>
 </Project>
