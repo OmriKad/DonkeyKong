@@ -17,7 +17,7 @@ void DonkeyKong::throwBarrel()
     if (pBarrels && pBoard)
     {
         Barrel newBarrel;
-        newBarrel.setPosition(x+1, y);
+        newBarrel.setPosition(x, y);
         newBarrel.setBoard(*pBoard);
         pBarrels->push_back(newBarrel);
     }

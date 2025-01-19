@@ -13,6 +13,7 @@
 #define DEFAULT_VALUE 0
 #define ESC 27
 #define START_GAME '1'
+#define LEVELS_SCREEN '2'
 #define SHOW_INSTRUCTIONS '8'
 #define EXIT_GAME '9'
 #define RETURN_TO_MENU '0'
@@ -41,7 +42,14 @@ void Game::game()
 			if (levels.empty())
 				showNoLevelAviableScreen();
 			else
-				initGame(levels[0], INITIAL_SCORE, MAX_LIVES);// should start at lvl 1
+				initGame(levels[0], INITIAL_SCORE, MAX_LIVES, 0, true);
+			break;
+			// Player pressed show instructions key
+		case LEVELS_SCREEN:
+			if (levels.empty())
+				showNoLevelAviableScreen();
+			else
+				showLevelsScreen(keyPressed);
 			break;
 			// Player pressed show instructions key
 		case SHOW_INSTRUCTIONS:
@@ -124,7 +132,7 @@ char Game::showMenu() const
 		if (_kbhit()) {
 			keyPressed = getKeyFromUser();
 
-			if (keyPressed == SHOW_INSTRUCTIONS || keyPressed == START_GAME || keyPressed == SHOW_INSTRUCTIONS || keyPressed == EXIT_GAME)
+			if (keyPressed == SHOW_INSTRUCTIONS || keyPressed == START_GAME || keyPressed == LEVELS_SCREEN || keyPressed == SHOW_INSTRUCTIONS || keyPressed == EXIT_GAME)
 				break;
 		}
 	}
@@ -206,6 +214,32 @@ void Game::showPauseScreen(char& keyPressed) const
 	return;
 }
 
+void Game::showLevelsScreen(char& keyPressed)
+{
+	keyPressed = DEFAULT_VALUE;
+	int i = 0;
+	clearScreen();
+
+	cout << "Donkey Kong level selection:" << endl << endl;
+	for (const auto& it : levelsNames) {
+		cout << "(" << (char)(i + 1 + '0') << ")" << it << endl;
+		i++;
+	}
+	while (keyPressed != RETURN_TO_MENU)
+	{
+		keyPressed = getKeyFromUser();
+		keyPressed -= '0';
+		if (keyPressed > 0 || keyPressed < i) {
+			Sleep(400);
+			clearScreen();
+			initGame(levels[keyPressed-1], INITIAL_SCORE, MAX_LIVES, keyPressed-1, false);
+			return;
+		}
+	}
+	return;
+	
+}
+
 void Game::showDeathScreen() const
 {
 	clearScreen();
@@ -216,12 +250,24 @@ void Game::showDeathScreen() const
 	Sleep(4000);
 }
 
-void Game::showWinScreen() const
+void Game::showLevelCompletedScreen(short currScore, short currLives, int newLevelIndex, bool fullGame) 
+{
+	clearScreen();
+	cout << endl << endl << endl;
+	cout << "       Level completed!       " << endl;
+	cout << "       YOUR SCORE IS:" << currScore << endl;
+	cout << "       Loading next level!       " << endl;
+	Sleep(4000);
+	initGame(levels[newLevelIndex], currScore, currLives, newLevelIndex, fullGame);
+}
+
+void Game::showWinScreen(short finalScore) const
 {
 	clearScreen();
 
 	cout << endl << endl << endl;
 	cout << "       PAULINE SAVED! YOU WON!       " << endl;
+	cout << "       YOUR FINAL SCORE IS: " << finalScore << endl;
 	cout << "       Returning to main menu..." << endl;
 	Sleep(4000);
 }
@@ -243,7 +289,7 @@ bool Game::getKeyPress(char& keyPressed)
 
 
 
-void Game::initGame(Board& currBoard, short currScore, short currLives) {
+void Game::initGame(Board& currBoard, short currScore, short currLives, int levelIndex, bool fullGame) {
 	bool isGameRunning = true; // Game stops when Mario loses all lives or wins
 	Mario m;                   // Initialize Mario
 	m.setScore(currScore);
@@ -296,9 +342,24 @@ void Game::initGame(Board& currBoard, short currScore, short currLives) {
 	}
 
 	if (marioLost)
+	{
 		showDeathScreen();
+	}
 	else if (marioWon)
-		showWinScreen();
+	{
+		if (&currBoard == &levels.back() || fullGame == false) // Check if it's the final level
+		{
+			showWinScreen(m.getScore());
+		}
+		else
+		{
+			showLevelCompletedScreen(m.getScore(), m.getLives(), levelIndex + 1, true);
+		}
+	}
+	else
+	{
+		return; // Return to main menu
+	}
 }
 
 void Game::moveGhosts(Mario& m) {
@@ -343,7 +404,7 @@ void Game::checkGhostCollision(Mario& m, const std::vector<Ghost>& ghosts) {
 void Game::checkCollision(Mario& m)
 {
 	const int EXPLODING_BARREL_DISTANCE = 2;
-	const int NON_EXPLODING_BARREL_DISTANCE = 1;
+	const int NON_EXPLODING_BARREL_DISTANCE = 0;
 
 	for (const auto& barrel : barrels)
 	{
@@ -355,7 +416,7 @@ void Game::checkCollision(Mario& m)
 			handleCollision(m);
 			return;
 		}
-		else if (!barrel.getExploded() && dx <= NON_EXPLODING_BARREL_DISTANCE && m.getY() == barrel.getY())
+		else if (!barrel.getExploded() && dx == NON_EXPLODING_BARREL_DISTANCE && m.getY() == barrel.getY())
 		{
 			handleCollision(m);
 			return;
@@ -370,7 +431,7 @@ void Game::checkAttacking(Mario& m)
 		for (auto barrel = barrels.begin(); barrel != barrels.end();)
 		{
 			int dx = abs(m.getX() - barrel->getX());
-			if (dx <= 3 && m.getY() == barrel->getY())
+			if (dx <= 2 && m.getY() == barrel->getY())
 			{
 				barrel->erase();
 				barrel = barrels.erase(barrel);
@@ -384,7 +445,7 @@ void Game::checkAttacking(Mario& m)
 		for (auto ghost = ghosts.begin(); ghost != ghosts.end();)
 		{
 			int dx = abs(m.getX() - ghost->getX());
-			if (dx <= 3 && m.getY() == ghost->getY())
+			if (dx <= 2 && m.getY() == ghost->getY())
 			{
 				ghost->erase();
 				ghost = ghosts.erase(ghost);

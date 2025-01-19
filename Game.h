@@ -17,13 +17,15 @@ class Game
 	char showMenu() const;
 	void showInstructions() const;
 	bool getKeyPress(char& keyPressed);
-	void initGame(Board& currBoard, short currScore, short levelIndex);
+	void initGame(Board& currBoard, short currScore, short currLives, int levelIndex, bool fullGame);
 	void moveGhosts(Mario& m);
 	void pauseStatus(char& key, Board& board, bool& isGameRunning, int& retFlag);
 	void showPauseScreen(char& keyPressed) const;
 	void showNoLevelAviableScreen() const;
 	void showDeathScreen() const;
-	void showWinScreen() const;
+	void showLevelCompletedScreen(short currScore, short currLives, int levelIndex, bool fullGame);
+	void showLevelsScreen(char& keyPressed);
+	void showWinScreen(short finalScore) const;
 	bool marioLost = false;
 	bool marioWon = false;
 	DonkeyKong donkeyKong;

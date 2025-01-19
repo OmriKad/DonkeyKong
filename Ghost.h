@@ -5,6 +5,8 @@
 class Ghost : public Character
 {
     bool movingRight = true; // Default direction
+    int moveCounter = 0; // Counter to slow down movement
+    static constexpr int MOVE_DELAY = 3; // Delay factor to slow down movement
 public:
     Ghost(int startX, int startY) {
         ch = 'x';
@@ -16,6 +18,13 @@ public:
     void move() {
         erase();
 
+        // Increment the move counter
+        moveCounter++;
+        if (moveCounter < MOVE_DELAY) {
+            draw();
+            return; // Skip movement to slow down the ghost
+        }
+        moveCounter = 0; // Reset the counter
 
         // Check the tile below the ghost to ensure it's a floor
         char tileBelow = pBoard->getChar(x, y + 1);
