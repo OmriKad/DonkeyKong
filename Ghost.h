@@ -6,7 +6,7 @@ class Ghost : public Character
 {
     bool movingRight = true; // Default direction
     int moveCounter = 0; // Counter to slow down movement
-    static constexpr int MOVE_DELAY = 3; // Delay factor to slow down movement
+    static constexpr int MOVE_DELAY = 1; // Delay factor to slow down movement
 public:
     Ghost(int startX, int startY) {
         ch = 'x';

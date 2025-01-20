@@ -5,8 +5,8 @@
 // This class and methods was adapted using CoPilot.
 class DonkeyKong
 {
-	int x = 17;
-	int y = 3;
+	int x;
+	int y;
 	char ch = '&';
 	Board* pBoard = nullptr;
 	std::vector<Barrel>* pBarrels = nullptr;

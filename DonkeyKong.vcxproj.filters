@@ -67,15 +67,15 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="dkong_1.screen.txt">
+    <None Include="dkong_Alpha.screen.txt">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="dkong_2.screen.txt">
+    <Text Include="dkong_Alphard.screen.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="dkong_3.screen.txt">
+    <Text Include="dkong_Omega.screen.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

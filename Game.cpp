@@ -8,7 +8,6 @@
 #include "Barrel.h"
 #include "Ghost.h"
 #include "Game.h"
-#include <regex>
 #include <filesystem>
 #define DEFAULT_VALUE 0
 #define ESC 27
@@ -17,7 +16,7 @@
 #define SHOW_INSTRUCTIONS '8'
 #define EXIT_GAME '9'
 #define RETURN_TO_MENU '0'
-#define INITIAL_SCORE 100
+#define INITIAL_SCORE 0
 #define MAX_LIVES 5
 
 using namespace std;
@@ -101,10 +100,12 @@ void Game::scanFileNames(std::vector<std::string>& levelNames)
 	for (const auto& entry : fs::directory_iterator(fs::current_path())) {
 		auto filename = entry.path().filename();
 		auto filenameStr = filename.string();
-		if (filenameStr.substr(0, 6) == "dkong_" && filename.extension() == ".txt") {
+		if (filenameStr.substr(0, 6) == "dkong_" && filenameStr.size() > 12 && filenameStr.substr(filenameStr.size() - 11) == ".screen.txt") {
 			levelNames.push_back(filenameStr);
 		}
 	}
+	// Sort the level names in lexicographic order
+	std::sort(levelNames.begin(), levelNames.end());
 }
 
 char Game::showMenu() const
@@ -173,7 +174,7 @@ void Game::showInstructions() const
 	cout << "* Use Hammer: p or P" << endl << endl;
 
 	cout << "Health system:" << endl;
-	cout << "Mario begins the level with 3 lives. For each hit or fall from height Mario losses 1 life and the level restarts." << endl;
+	cout << "Mario begins the level with 5 lives. For each hit or fall from height Mario losses 1 life and the level restarts." << endl;
 	cout << "When reaching 0 lives, the game ends." << endl << endl;
 
 	cout << "Score system:" << endl;
@@ -222,22 +223,24 @@ void Game::showLevelsScreen(char& keyPressed)
 
 	cout << "Donkey Kong level selection:" << endl << endl;
 	for (const auto& it : levelsNames) {
-		cout << "(" << (char)(i + 1 + '0') << ")" << it << endl;
+		// Remove the ".screen.txt" part from the level name
+		std::string levelName = it.substr(0, it.size() - 11);
+		cout << "(" << (char)(i + 1 + '0') << ")" << levelName << endl;
 		i++;
 	}
+	cout << "(0) Return to main menu" << endl;
 	while (keyPressed != RETURN_TO_MENU)
 	{
 		keyPressed = getKeyFromUser();
-		keyPressed -= '0';
-		if (keyPressed > 0 || keyPressed < i) {
+		if (keyPressed > '0' && keyPressed - '0' <= i) {
+			int sessionIndex = keyPressed - '0' - 1;
 			Sleep(400);
 			clearScreen();
-			initGame(levels[keyPressed-1], INITIAL_SCORE, MAX_LIVES, keyPressed-1, false);
+			initGame(levels[sessionIndex], INITIAL_SCORE, MAX_LIVES, sessionIndex, false);
 			return;
 		}
 	}
 	return;
-	
 }
 
 void Game::showDeathScreen() const

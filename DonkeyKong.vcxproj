@@ -47,11 +47,11 @@
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="dkong_1.screen.txt" />
+    <None Include="dkong_Alpha.screen.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="dkong_2.screen.txt" />
-    <Text Include="dkong_3.screen.txt" />
+    <Text Include="dkong_Alphard.screen.txt" />
+    <Text Include="dkong_Omega.screen.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
