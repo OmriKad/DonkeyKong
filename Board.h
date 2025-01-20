@@ -37,7 +37,8 @@ public:
     char getChar(int x, int y) const { return currentBoard[y][x]; }
     void printLegend(short lives, short score) const;
     void setBoardIsLegal(bool b) { boardIsLegal = b; }
-    void readBoardFromFile(const std::string& fileName);
+    void readBoardFromFile(const std::string& fileName, bool& rejected);
+    void fillQandSpaces(std::string& line, int y);
     bool getBoardIsLegal() const { return boardIsLegal; }
     int getMarioStartX() const { return marioStartPos.x; }
     int getMarioStartY() const { return marioStartPos.y; }

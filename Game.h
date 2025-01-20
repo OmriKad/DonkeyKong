@@ -39,7 +39,6 @@ public:
 	//from here we control the flow of the game with the help of the menu
 	void game();
 	void checkStatus(Mario& m, bool& isGameRunning);
-	void checkCollision(Mario& m);
 	void checkAttacking(Mario& m);
 	void moveBarrels(Mario& m);
 };

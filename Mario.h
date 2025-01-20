@@ -11,7 +11,7 @@ class Mario : public Character
 	// Some of the class attributes and the movement + board logic was inspired by the code example published my Amir Kirsh.
 	int lastDirX = 0;
 	short lives;
-	short score;
+	unsigned short score;
 	bool isAlive = true;
 	bool hasWon = false;
 	bool isFalling = false;
@@ -28,7 +28,7 @@ public:
 
 	void decreaseLife() { lives--; }
 	void gainPoints() { score += 10; }
-	void decreasePoints() { score -= 40; }
+	void decreasePoints() { score >= 40 ? score -= 40 : score = 0; }
 	void keyPressed(char key);
 	void move();
 	void resetPos() { x = pBoard->getMarioStartX(); y = pBoard->getMarioStartY(); ch = '@'; hasHammer = false; }

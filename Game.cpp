@@ -86,7 +86,17 @@ void Game::downloadLevels()
 	scanFileNames(levelsNames);
 	for (const auto& levelName : levelsNames) {
 		Board board;
-		board.readBoardFromFile(levelName);
+		bool rejected = false;
+		board.readBoardFromFile(levelName, rejected);
+		if (rejected)
+		{
+			std::cout << "Error: Could not read file " << levelName << ", encoutered entities missing or duplicates." << std::endl;
+			Sleep(4000);
+			clearScreen();
+			// Remove the fileName from the vector
+			levelsNames.erase(std::remove(levelsNames.begin(), levelsNames.end(), levelName), levelsNames.end());
+			continue;
+		}
 		levels.push_back(board);
 	}
 }
@@ -332,12 +342,11 @@ void Game::initGame(Board& currBoard, short currScore, short currLives, int leve
 
 			m.keyPressed(key);       // Send key command to Mario
 			donkeyKong.update();    // Donkey Kong decides whether to throw a barrel
+			checkGhostCollision(m, ghosts); // Check Mario's collision with ghosts
 			moveBarrels(m);         // Move barrels
 			moveGhosts(m);     // Move ghosts
 			m.move();               // Mario moves according to input
 			checkAttacking(m);      // Check if Mario is attacking
-			checkCollision(m);      // Check if Mario got hit
-			checkGhostCollision(m, ghosts); // Check Mario's collision with ghosts
 			checkStatus(m, isGameRunning); // Check if Mario is dead or reached Pauline
 			currBoard.printLegend(m.getLives(), m.getScore()); // Display the legend
 			Sleep(90);
@@ -404,29 +413,6 @@ void Game::checkGhostCollision(Mario& m, const std::vector<Ghost>& ghosts) {
 
 
 
-void Game::checkCollision(Mario& m)
-{
-	const int EXPLODING_BARREL_DISTANCE = 2;
-	const int NON_EXPLODING_BARREL_DISTANCE = 0;
-
-	for (const auto& barrel : barrels)
-	{
-		int dx = abs(m.getX() - barrel.getX());
-		int dy = abs(m.getY() - barrel.getY());
-
-		if (barrel.getExploded() && dx <= EXPLODING_BARREL_DISTANCE && dy <= EXPLODING_BARREL_DISTANCE)
-		{
-			handleCollision(m);
-			return;
-		}
-		else if (!barrel.getExploded() && dx == NON_EXPLODING_BARREL_DISTANCE && m.getY() == barrel.getY())
-		{
-			handleCollision(m);
-			return;
-		}
-	}
-}
-
 void Game::checkAttacking(Mario& m)
 {
 	if (m.getUsingHammer())
@@ -477,6 +463,22 @@ void Game::moveBarrels(Mario& m)
 	for (auto it = barrels.begin(); it != barrels.end(); )
 	{
 		it->move();
+
+		// Check for collision before removing the barrel
+		const int EXPLODING_BARREL_DISTANCE = 2;
+		const int NON_EXPLODING_BARREL_DISTANCE = 0;
+
+		int dx = abs(m.getX() - it->getX());
+		int dy = abs(m.getY() - it->getY());
+
+		if (it->getExploded() && dx <= EXPLODING_BARREL_DISTANCE && dy <= EXPLODING_BARREL_DISTANCE)
+		{
+			handleCollision(m);
+		}
+		else if (!it->getExploded() && dx == NON_EXPLODING_BARREL_DISTANCE && m.getY() == it->getY())
+		{
+			handleCollision(m);
+		}
 
 		// Remove barrel if it has exploded
 		if (it->getExploded())
