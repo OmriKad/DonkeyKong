@@ -2,8 +2,11 @@
 #include "utils.h"
 void DonkeyKong::draw() const
 {
-	gotoxy(x, y);
-	std::cout << ch;
+    if (!pBoard->getIsSilent())
+    {
+        gotoxy(x, y);
+        std::cout << ch;
+    }
 }
 
 void DonkeyKong::erase() const

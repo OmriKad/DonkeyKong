@@ -60,3 +60,10 @@ int checkArgs(int argc, char** argv, bool& isLoad, bool& isSave, bool& isSilent,
     retFlag = false;
     return {};
 }
+
+void reportResultError(const std::string& message, const std::string& filename, size_t iteration) {
+    system("cls");
+    std::cout << "Screen " << filename << " - " << message << '\n';
+    std::cout << "Iteration: " << iteration << '\n';
+    _getch();
+}

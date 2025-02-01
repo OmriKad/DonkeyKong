@@ -7,6 +7,7 @@ public:
     struct Position { int x, y; };
 private:
     bool boardIsLegal;
+    bool isSilent;
     static constexpr int MAX_X = 80;
     static constexpr int MAX_Y = 25;
     Position marioStartPos;
@@ -47,4 +48,6 @@ public:
     int getLegendStartX() const { return legendStartPos.x; }
     int getLegendStartY() const { return legendStartPos.y; }
     std::vector<Position> getGhostsStartPos() const { return ghostsStartPos; }
+	void setIsSilent(bool b) { isSilent = b; }
+	bool getIsSilent() const { return isSilent; }
 };

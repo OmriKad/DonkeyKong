@@ -72,20 +72,20 @@ void HumanInputGame::initGame(Board& currBoard, short currScore, short currLives
 			++iteration;
 		}
 	}
-
+	steps.saveSteps(stepsFilename);
+	results.addResult(m.getScore(), Results::finalScore);
 	if (marioLost)
 	{
+		results.addResult(iteration, Results::lost);
+		results.saveResults(resultsFilename);
 		showDeathScreen();
 	}
 	else if (marioWon)
 	{
-		steps.saveSteps(stepsFilename);
 		results.addResult(iteration, Results::finished);
-		results.addResult(m.getScore(), Results::finalScore);
 		results.saveResults(resultsFilename);
 		if (&currBoard == &levels.back() || fullGame == false) // Check if it's the final level
 		{
-			
 			showWinScreen(m.getScore());
 		}
 		else

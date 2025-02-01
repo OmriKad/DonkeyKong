@@ -42,12 +42,12 @@ public:
 	Game(int sleepTime = 50, bool silentMode = false, bool saveMode = false)
 		: sleepTime(sleepTime), silentMode(silentMode), saveMode(saveMode) {
 	}
+	virtual void game();
 	void setSaveMode(bool mode) { saveMode = mode; }
 	bool getSaveMode() const { return saveMode; }
 	void setSilentMode(bool mode) { silentMode = mode; }
 	bool getSilentMode() const { return silentMode; }
 	void setSleepTime(int time) { sleepTime = time; }
-	void game();
 	void checkStatus(Mario& m, bool& isGameRunning);
 	void checkAttacking(Mario& m);
 	void moveBarrels(Mario& m);

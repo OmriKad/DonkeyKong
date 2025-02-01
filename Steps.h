@@ -5,8 +5,8 @@
 
 class Steps {
 	long randomSeed = 0;
-	std::list<std::pair<size_t, char>> steps; // pair: iteration, step
 public:
+	std::list<std::pair<size_t, char>> steps; // pair: iteration, step
 	static Steps loadSteps(const std::string& filename);
 	void saveSteps(const std::string& filename) const;
 	long getRandomSeed() const {

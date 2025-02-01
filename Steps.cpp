@@ -2,9 +2,15 @@
 #include <fstream>
 #include "Steps.h"
 
+#include <fstream>
+#include <iostream>
+#include "Steps.h"
+
 Steps Steps::loadSteps(const std::string& filename) {
 	Steps steps;
 	std::ifstream steps_file(filename);
+	if (!steps_file.is_open())
+		return steps;
 	steps_file >> steps.randomSeed;
 	size_t size;
 	steps_file >> size;

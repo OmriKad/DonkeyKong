@@ -15,8 +15,11 @@ protected:
 
     void draw(char c) const
     {
-        gotoxy(x, y);
-        std::cout << c;
+        if (!pBoard->getIsSilent())
+        {
+            gotoxy(x, y);
+            std::cout << c;
+        }
     }
 
 public:

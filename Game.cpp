@@ -233,8 +233,8 @@ void Game::showLevelsScreen(char& keyPressed)
 
 	cout << "Donkey Kong level selection:" << endl << endl;
 	for (const auto& it : levelsNames) {
-		// Remove the ".screen.txt" part from the level name
-		std::string levelName = it.substr(0, it.size() - 11);
+		// Remove the ".screen" part from the level name
+		std::string levelName = it.substr(0, it.size() - 7);
 		cout << "(" << (char)(i + 1 + '0') << ")" << levelName << endl;
 		i++;
 	}

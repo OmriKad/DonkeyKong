@@ -25,3 +25,10 @@ void Results::saveResults(const std::string& filename) const {
 	}
 	results_file.close();
 }
+
+size_t Results::getNextLostLife() const {
+	if (!results.empty() && results.front().second == lostLife) {
+		return results.front().first;
+	}
+	else return std::numeric_limits<size_t>::max(); // a big number we will never reach
+}

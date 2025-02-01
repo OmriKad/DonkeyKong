@@ -5,7 +5,7 @@
 
 class Results {
 public:
-	enum ResultValue { lostLife, finished, finalScore, noResult };
+	enum ResultValue { lostLife, finished, finalScore, lost, noResult };
 private:
 	std::list<std::pair<size_t, ResultValue>> results; // pair: iteration, result
 public:
@@ -23,5 +23,5 @@ public:
 	bool isFinishedBy(size_t iteration) const {
 		return results.empty() || results.back().first <= iteration;
 	}
-	size_t getNextBombIteration() const;
+	size_t getNextLostLife() const;
 };

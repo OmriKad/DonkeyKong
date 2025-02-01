@@ -14,19 +14,25 @@ void Board::reset() {
 }
 
 void Board::print() const {
-	for (int i = 0; i < MAX_Y - 1; i++) {
-		std::cout << currentBoard[i] << '\n';
+	if (!isSilent)
+	{
+		for (int i = 0; i < MAX_Y - 1; i++) {
+			std::cout << currentBoard[i] << '\n';
+		}
+		std::cout << currentBoard[MAX_Y - 1];
 	}
-	std::cout << currentBoard[MAX_Y - 1];
 }
 
 
 void Board::printLegend(short lives, short score) const
 {
-	gotoxy(legendStartPos.x, legendStartPos.y);
-    std::cout << "Lives: " << lives << std::endl;
-	gotoxy(legendStartPos.x, legendStartPos.y + 1);
-	std::cout << "Score: " << score << std::endl;
+	if (!isSilent)
+	{
+		gotoxy(legendStartPos.x, legendStartPos.y);
+		std::cout << "Lives: " << lives << std::endl;
+		gotoxy(legendStartPos.x, legendStartPos.y + 1);
+		std::cout << "Score: " << score << std::endl;
+	}
 }
 
 
