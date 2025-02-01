@@ -10,6 +10,10 @@
 
 class Game
 {
+protected:
+	int sleepTime;
+	bool silentMode;
+	bool saveMode;
 	void downloadLevels();
 	// string vector for the file names
 	std::vector<std::string> levelsNames;
@@ -17,7 +21,7 @@ class Game
 	char showMenu() const;
 	void showInstructions() const;
 	bool getKeyPress(char& keyPressed);
-	void initGame(Board& currBoard, short currScore, short currLives, int levelIndex, bool fullGame);
+	virtual void initGame(Board& currBoard, short currScore, short currLives, int levelIndex, bool fullGame);
 	void moveGhosts(Mario& m);
 	void pauseStatus(char& key, Board& board, bool& isGameRunning, int& retFlag);
 	void showPauseScreen(char& keyPressed) const;
@@ -33,10 +37,16 @@ class Game
 	std::vector<Ghost> ghosts;
 	std::vector<Board> levels;
 	void handleCollision(Mario& m);
-	void checkGhostCollision(Mario& m, const std::vector<Ghost>& ghosts); // Add this line
+	void checkGhostCollision(Mario& m, const std::vector<Ghost>& ghosts);
 public:
-	// This is the main method of the game,
-	//from here we control the flow of the game with the help of the menu
+	Game(int sleepTime = 50, bool silentMode = false, bool saveMode = false)
+		: sleepTime(sleepTime), silentMode(silentMode), saveMode(saveMode) {
+	}
+	void setSaveMode(bool mode) { saveMode = mode; }
+	bool getSaveMode() const { return saveMode; }
+	void setSilentMode(bool mode) { silentMode = mode; }
+	bool getSilentMode() const { return silentMode; }
+	void setSleepTime(int time) { sleepTime = time; }
 	void game();
 	void checkStatus(Mario& m, bool& isGameRunning);
 	void checkAttacking(Mario& m);

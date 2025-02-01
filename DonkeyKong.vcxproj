@@ -30,10 +30,14 @@
     <ClCompile Include="Barrel.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="DonkeyKong.cpp" />
+    <ClCompile Include="FileInputGame.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Ghost.cpp" />
+    <ClCompile Include="HumanInputGame.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mario.cpp" />
+    <ClCompile Include="Results.cpp" />
+    <ClCompile Include="Steps.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -41,9 +45,13 @@
     <ClInclude Include="Board.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="DonkeyKong.h" />
+    <ClInclude Include="FileInputGame.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Ghost.h" />
+    <ClInclude Include="HumanInputGame.h" />
     <ClInclude Include="Mario.h" />
+    <ClInclude Include="Results.h" />
+    <ClInclude Include="Steps.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>

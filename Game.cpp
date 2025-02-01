@@ -110,7 +110,7 @@ void Game::scanFileNames(std::vector<std::string>& levelNames)
 	for (const auto& entry : fs::directory_iterator(fs::current_path())) {
 		auto filename = entry.path().filename();
 		auto filenameStr = filename.string();
-		if (filenameStr.substr(0, 6) == "dkong_" && filenameStr.size() > 12 && filenameStr.substr(filenameStr.size() - 11) == ".screen.txt") {
+		if (filenameStr.substr(0, 6) == "dkong_" && filenameStr.size() > 12 && filenameStr.substr(filenameStr.size() - 7) == ".screen") {
 			levelNames.push_back(filenameStr);
 		}
 	}
@@ -349,7 +349,7 @@ void Game::initGame(Board& currBoard, short currScore, short currLives, int leve
 			checkAttacking(m);      // Check if Mario is attacking
 			checkStatus(m, isGameRunning); // Check if Mario is dead or reached Pauline
 			currBoard.printLegend(m.getLives(), m.getScore()); // Display the legend
-			Sleep(90);
+			Sleep(sleepTime);
 		}
 	}
 
