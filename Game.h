@@ -21,7 +21,7 @@ protected:
 	char showMenu() const;
 	void showInstructions() const;
 	bool getKeyPress(char& keyPressed);
-	void initGame(Board& currBoard, short currScore, short currLives, int levelIndex, bool fullGame);
+	virtual void initGame(Board& currBoard, short currScore, short currLives, int levelIndex, bool fullGame);
 	void moveGhosts(Mario& m);
 	void pauseStatus(char& key, Board& board, bool& isGameRunning, int& retFlag);
 	void showPauseScreen(char& keyPressed) const;

@@ -39,3 +39,24 @@ char getKeyFromUser()
         }
     }
 }
+
+int checkArgs(int argc, char** argv, bool& isLoad, bool& isSave, bool& isSilent, bool& retFlag)
+{
+    retFlag = true;
+    for (int i = 1; i < argc; ++i)
+    {
+        if (std::string(argv[i]) == "-load")
+            isLoad = true;
+        else if (std::string(argv[i]) == "-save")
+            isSave = true;
+        else if (std::string(argv[i]) == "-silent")
+            isSilent = true;
+    }
+    if (isLoad && isSave)
+    {
+        std::cerr << "Error: Cannot use -load and -save together." << std::endl;
+        return 1;
+    }
+    retFlag = false;
+    return {};
+}
